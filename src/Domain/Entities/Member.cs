@@ -15,5 +15,6 @@ namespace Domain.Entities
             Inactivo,
             EnDeuda
         }
+        public List<WorkoutClass> WorkoutClasses { get; set; } = new List<WorkoutClass>();
     }
 }

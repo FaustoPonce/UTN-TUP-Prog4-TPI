@@ -4,6 +4,7 @@ using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251005135827_SecondMigration")]
+    partial class SecondMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -162,21 +165,6 @@ namespace Infrastructure.Data.Migrations
                     b.ToTable("WorkoutPlans");
                 });
 
-            modelBuilder.Entity("MemberWorkoutClass", b =>
-                {
-                    b.Property<int>("MembersId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("WorkoutClassesId")
-                        .HasColumnType("int");
-
-                    b.HasKey("MembersId", "WorkoutClassesId");
-
-                    b.HasIndex("WorkoutClassesId");
-
-                    b.ToTable("MemberWorkoutClass");
-                });
-
             modelBuilder.Entity("Domain.Entities.Admin", b =>
                 {
                     b.HasBaseType("Domain.Entities.User");
@@ -200,6 +188,11 @@ namespace Infrastructure.Data.Migrations
 
                     b.Property<DateTime>("CreationDate")
                         .HasColumnType("datetime(6)");
+
+                    b.Property<int?>("WorkoutClassId")
+                        .HasColumnType("int");
+
+                    b.HasIndex("WorkoutClassId");
 
                     b.HasDiscriminator().HasValue("Member");
                 });
@@ -273,19 +266,16 @@ namespace Infrastructure.Data.Migrations
                     b.Navigation("Member");
                 });
 
-            modelBuilder.Entity("MemberWorkoutClass", b =>
+            modelBuilder.Entity("Domain.Entities.Member", b =>
                 {
-                    b.HasOne("Domain.Entities.Member", null)
-                        .WithMany()
-                        .HasForeignKey("MembersId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Domain.Entities.WorkoutClass", null)
-                        .WithMany()
-                        .HasForeignKey("WorkoutClassesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .WithMany("Members")
+                        .HasForeignKey("WorkoutClassId");
+                });
+
+            modelBuilder.Entity("Domain.Entities.WorkoutClass", b =>
+                {
+                    b.Navigation("Members");
                 });
 #pragma warning restore 612, 618
         }
