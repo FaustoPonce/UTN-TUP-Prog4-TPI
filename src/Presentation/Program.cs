@@ -1,3 +1,7 @@
+using Application.Interfaces;
+using Application.Services;
+using Domain.Entities;
+using Domain.Interfaces;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,6 +18,11 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
+
+// Inyeccion de dependencias de servicios
+builder.Services.AddScoped<IUserService, UserService>();
+// Inyeccion de dependencias de repositorios
+builder.Services.AddScoped<IRepositoryBase<User>, RepositoryBase<User>>();
 
 var app = builder.Build();
 
