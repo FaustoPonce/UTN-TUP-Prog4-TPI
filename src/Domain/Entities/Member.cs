@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Domain.Enums;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,12 +10,8 @@ namespace Domain.Entities
     public class Member : User
     {
         public DateTime CreationDate { get; set; }
-        public enum State
-        {
-            Activo,
-            Inactivo,
-            EnDeuda
-        }
+        // enum que define el estado del miembro
+        public MemberState State { get; set; }
         public List<WorkoutClass> WorkoutClasses { get; set; } = new List<WorkoutClass>();
     }
 }

@@ -5,12 +5,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Domain.Entities
+namespace Application.Models.Request
 {
-    public class Employee : User
+    public class CreationEmployeeDto
     {
+        public string Name { get; set; }
+        public string Email { get; set; }
+        public string Password { get; set; }
         public decimal Salary { get; set; }
-        // Este es el enum que define el rol del empleado
         public EmployeeRole Role { get; set; }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Domain.Enums;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -14,11 +15,8 @@ namespace Domain.Entities
         public decimal Amount { get; set; }
         public DateTime Date { get; set; }
         public int MemberId { get; set; }
-        public enum PaymentMethod
-        {
-            efectivo,
-            tarjeta
-        }
+        // enum que define el metodo de pago
+        public PaymentMethod PaymentMethod { get; set; }
         public Member Member { get; set; }
     }
 }

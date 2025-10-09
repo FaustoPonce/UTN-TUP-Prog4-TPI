@@ -21,8 +21,10 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 // Inyeccion de dependencias de servicios
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IEmployeeService, EmployeeService>();
 // Inyeccion de dependencias de repositorios
 builder.Services.AddScoped<IRepositoryBase<User>, RepositoryBase<User>>();
+builder.Services.AddScoped<IRepositoryBase<Employee>, RepositoryBase<Employee>>();
 
 var app = builder.Build();
 
