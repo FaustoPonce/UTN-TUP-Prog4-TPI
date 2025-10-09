@@ -20,6 +20,10 @@ namespace Application.Models
 
         public static EmployeeDto FromEntity(Employee employee)
         {
+            if (employee == null)
+            {
+                return null;
+            }
             var employeeDto = new EmployeeDto
             {
                 Id = employee.Id,

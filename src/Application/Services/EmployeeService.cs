@@ -61,6 +61,15 @@ namespace Application.Services
         public void Update(int id, CreationEmployeeDto creationEmployeeDto)
         {
             var employeeToUpdate = _employeeRepositoryBase.GetById(id);
+            if (employeeToUpdate != null)
+            {
+                employeeToUpdate.Name = creationEmployeeDto.Name;
+                employeeToUpdate.Email = creationEmployeeDto.Email;
+                employeeToUpdate.Password = creationEmployeeDto.Password;
+                employeeToUpdate.Salary = creationEmployeeDto.Salary;
+                employeeToUpdate.Role = creationEmployeeDto.Role;
+                _employeeRepositoryBase.Update(employeeToUpdate);
+            }
         }
     }
 }
