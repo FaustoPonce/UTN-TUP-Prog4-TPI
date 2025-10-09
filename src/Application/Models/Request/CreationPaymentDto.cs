@@ -1,4 +1,5 @@
 ﻿using Domain.Entities;
+using Domain.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,11 +8,11 @@ using System.Threading.Tasks;
 
 namespace Application.Models.Request
 {
-    public class CreationWorkoutPlanDto
+    public class CreationPaymentDto
     {
-        public string Name { get; set; }
-        public string Description { get; set; }
-        public decimal Price { get; set; }
+        public decimal Amount { get; set; }
         public int MemberId { get; set; }
+        // enum que define el metodo de pago
+        public PaymentMethod PaymentMethod { get; set; }
     }
 }

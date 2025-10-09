@@ -13,7 +13,7 @@ namespace Domain.Entities
         [Key]
         public int Id { get; set; }
         public decimal Amount { get; set; }
-        public DateTime Date { get; set; }
+        public DateTime Date { get; set; } = DateTime.Now;
         public int MemberId { get; set; }
         // enum que define el metodo de pago
         public PaymentMethod PaymentMethod { get; set; }

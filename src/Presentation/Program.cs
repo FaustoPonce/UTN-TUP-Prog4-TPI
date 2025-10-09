@@ -24,6 +24,9 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IEmployeeService, EmployeeService>();
 builder.Services.AddScoped<IAdminService, AdminService>();
 builder.Services.AddScoped<IWorkoutPlanService, WorkoutPlanService>();
+builder.Services.AddScoped<IMemberService, MemberService>();
+builder.Services.AddScoped<IAttendanceService, AttendanceService>();
+builder.Services.AddScoped<IPaymentService, PaymentService>();
 
 // Inyeccion de dependencias de repositorios
 builder.Services.AddScoped<IRepositoryBase<User>, RepositoryBase<User>>();
@@ -31,6 +34,8 @@ builder.Services.AddScoped<IRepositoryBase<Employee>, RepositoryBase<Employee>>(
 builder.Services.AddScoped<IRepositoryBase<Admin>, RepositoryBase<Admin>>();
 builder.Services.AddScoped<IRepositoryBase<WorkoutPlan>, RepositoryBase<WorkoutPlan>>();
 builder.Services.AddScoped<IRepositoryBase<Member>, RepositoryBase<Member>>();
+builder.Services.AddScoped<IRepositoryBase<Attendance>, RepositoryBase<Attendance>>();
+builder.Services.AddScoped<IRepositoryBase<Payment>, RepositoryBase<Payment>>();
 
 var app = builder.Build();
 

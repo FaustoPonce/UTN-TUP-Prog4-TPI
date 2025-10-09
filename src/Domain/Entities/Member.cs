@@ -9,7 +9,6 @@ namespace Domain.Entities
 {
     public class Member : User
     {
-        public DateTime CreationDate { get; set; }
         // enum que define el estado del miembro
         public MemberState State { get; set; }
         public List<WorkoutClass> WorkoutClasses { get; set; } = new List<WorkoutClass>();

@@ -60,6 +60,7 @@ namespace Application.Services
                 adminToUpdate.Name = creationAdminDto.Name;
                 adminToUpdate.Email = creationAdminDto.Email;
                 adminToUpdate.Password = creationAdminDto.Password;
+                adminToUpdate.LastUpdate = DateTime.Now;
                 _adminRepositoryBase.Update(adminToUpdate);
             }
         }

@@ -79,12 +79,12 @@ namespace Application.Services
             }
             if (workoutPlanToUpdate != null)
             {
-                workoutPlanToUpdate.Name = creationWorkoutPlanDto.Name;
-                workoutPlanToUpdate.Description = creationWorkoutPlanDto.Description;
-                workoutPlanToUpdate.Price = creationWorkoutPlanDto.Price;
-                workoutPlanToUpdate.MemberId = creationWorkoutPlanDto.MemberId;
-                workoutPlanToUpdate.Member = member;
-                _workoutPlanRepositoryBase.Update(workoutPlanToUpdate);
+            workoutPlanToUpdate.Name = creationWorkoutPlanDto.Name;
+            workoutPlanToUpdate.Description = creationWorkoutPlanDto.Description;
+            workoutPlanToUpdate.Price = creationWorkoutPlanDto.Price;
+            workoutPlanToUpdate.MemberId = creationWorkoutPlanDto.MemberId;
+            workoutPlanToUpdate.Member = member;
+            _workoutPlanRepositoryBase.Update(workoutPlanToUpdate);
             }
         }
     }

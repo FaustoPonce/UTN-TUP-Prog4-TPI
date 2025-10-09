@@ -1,4 +1,5 @@
 ﻿using Domain.Entities;
+using Domain.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,11 +8,12 @@ using System.Threading.Tasks;
 
 namespace Application.Models.Request
 {
-    public class CreationWorkoutPlanDto
+    public class CreationMemberDto
     {
         public string Name { get; set; }
-        public string Description { get; set; }
-        public decimal Price { get; set; }
-        public int MemberId { get; set; }
+        public string Email { get; set; }
+        public string Password { get; set; }
+        public MemberState State { get; set; }
+   
     }
 }

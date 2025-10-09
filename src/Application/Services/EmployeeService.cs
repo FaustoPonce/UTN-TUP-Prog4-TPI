@@ -68,6 +68,7 @@ namespace Application.Services
                 employeeToUpdate.Password = creationEmployeeDto.Password;
                 employeeToUpdate.Salary = creationEmployeeDto.Salary;
                 employeeToUpdate.Role = creationEmployeeDto.Role;
+                employeeToUpdate.LastUpdate = DateTime.Now;
                 _employeeRepositoryBase.Update(employeeToUpdate);
             }
         }
