@@ -14,8 +14,8 @@ namespace Application.Models
         public DateTime Date { get; set; } 
         public int MemberId { get; set; }
         // enum que define el metodo de pago
-        public PaymentMethod PaymentMethod { get; set; }
-        public Member Member { get; set; }
+        public string PaymentMethod { get; set; }
+        public MemberDto Member { get; set; }
 
         public static PaymentDto FromEntity(Payment payment)
         {
@@ -26,8 +26,9 @@ namespace Application.Models
                 Amount = payment.Amount,
                 Date = payment.Date,
                 MemberId = payment.MemberId,
-                PaymentMethod = payment.PaymentMethod,
-                Member = payment.Member
+                PaymentMethod = payment.PaymentMethod.ToString(),
+                Member = MemberDto.FromEntity(payment.Member)
+
             };
             return paymentDto;
         }

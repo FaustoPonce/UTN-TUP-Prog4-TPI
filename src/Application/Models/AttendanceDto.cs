@@ -12,23 +12,25 @@ namespace Application.Models
     {
         public int Id { get; set; }
         public DateTime Date { get; set; }
-        public int? UserId { get; set; }
-        public User? User { get; set; }
+        public int? MemberId { get; set; }
+        public MemberDto? Member { get; set; }
         public int? EmployeeId { get; set; }
-        public Employee? Employee { get; set; }
+        public EmployeeDto? Employee { get; set; }
 
         public static AttendanceDto FromEntity(Attendance attendance)
-        { 
-            
-                return new AttendanceDto
-                {
-                    Id = attendance.Id,
-                    Date = attendance.Date,
-                    UserId = attendance.UserId,
-                    User = attendance.User,
-                    EmployeeId = attendance.EmployeeId,
-                    Employee = attendance.Employee
-                };
+        {
+            var member = attendance.Member != null ? MemberDto.FromEntity(attendance.Member) : null;
+
+            return new AttendanceDto
+            {
+
+                Id = attendance.Id,
+                Date = attendance.Date,
+                MemberId = attendance.MemberId,
+                Member = member,
+                EmployeeId = attendance.EmployeeId,
+                Employee = EmployeeDto.FromEntity(attendance.Employee)
+            };
             
         }
 

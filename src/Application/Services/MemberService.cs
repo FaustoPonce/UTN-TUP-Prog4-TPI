@@ -14,10 +14,12 @@ namespace Application.Services
     public class MemberService : IMemberService
     {
         private readonly IRepositoryBase<Member> _memberRepositoryBase;
+        private readonly IMemberRepository _memberRepository;
 
-        public MemberService(IRepositoryBase<Member> memberRepositoryBase)
+        public MemberService(IRepositoryBase<Member> memberRepositoryBase, IMemberRepository memberRepository)
         {
             _memberRepositoryBase = memberRepositoryBase;
+            _memberRepository = memberRepository;
         }
 
         public Member Create(CreationMemberDto creationMemberDto)
@@ -44,14 +46,14 @@ namespace Application.Services
 
         public List<MemberDto> GetAllMembers()
         {
-            var members = _memberRepositoryBase.GetAll();
+            var members = _memberRepository.GetAll();
             var memberDtos = MemberDto.FromEntityList(members);
             return memberDtos;
         }
 
         public MemberDto GetById(int id)
         {
-            var member = _memberRepositoryBase.GetById(id);
+            var member = _memberRepository.GetById(id);
             if (member == null)
             {
                 return null;

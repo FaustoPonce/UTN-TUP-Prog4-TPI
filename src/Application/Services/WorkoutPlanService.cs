@@ -15,11 +15,12 @@ namespace Application.Services
     {
         private readonly IRepositoryBase<WorkoutPlan> _workoutPlanRepositoryBase;
         private readonly IRepositoryBase<Member> _memberRepositoryBase;
-
-        public WorkoutPlanService(IRepositoryBase<WorkoutPlan> workoutPlanRepositoryBase, IRepositoryBase<Member> memberRepositoryBase)
+        private readonly IWorkoutPlanRepository _workoutPlanRepository;
+        public WorkoutPlanService(IRepositoryBase<WorkoutPlan> workoutPlanRepositoryBase, IRepositoryBase<Member> memberRepositoryBase, IWorkoutPlanRepository workoutPlanRepository)
         {
             _workoutPlanRepositoryBase = workoutPlanRepositoryBase;
             _memberRepositoryBase = memberRepositoryBase;
+            _workoutPlanRepository = workoutPlanRepository;
         }
 
         public WorkoutPlan Create(CreationWorkoutPlanDto creationWorkoutPlanDto)
@@ -52,14 +53,14 @@ namespace Application.Services
 
         public List<WorkoutPlanDto> GetAllWorkoutPlans()
         {
-            var workoutPlans = _workoutPlanRepositoryBase.GetAll();
+            var workoutPlans = _workoutPlanRepository.GetAll();
             var workoutPlanDtos = WorkoutPlanDto.FromEntityList(workoutPlans);
             return workoutPlanDtos;
         }
 
         public WorkoutPlanDto GetById(int id)
         {
-            var workoutPlan = _workoutPlanRepositoryBase.GetById(id);
+            var workoutPlan = _workoutPlanRepository.GetById(id);
             if (workoutPlan == null)
             {
                 return null;

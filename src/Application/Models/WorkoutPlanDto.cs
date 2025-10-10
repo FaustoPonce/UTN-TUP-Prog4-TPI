@@ -14,7 +14,7 @@ namespace Application.Models
         public string Description { get; set; }
         public decimal Price { get; set; }
         public int MemberId { get; set; }
-        public Member Member { get; set; }
+        public MemberDto Member { get; set; }
 
         public static WorkoutPlanDto FromEntity(WorkoutPlan workoutPlan)
         {
@@ -26,7 +26,7 @@ namespace Application.Models
                 Description = workoutPlan.Description,
                 Price = workoutPlan.Price,
                 MemberId = workoutPlan.MemberId,
-                Member = workoutPlan.Member
+                Member = MemberDto.FromEntity(workoutPlan.Member)
             };
             return workoutPlanDto;
         }

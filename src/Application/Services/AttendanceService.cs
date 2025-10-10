@@ -14,20 +14,38 @@ namespace Application.Services
     public class AttendanceService : IAttendanceService
     {
         private readonly IRepositoryBase<Attendance> _attendanceRepositoryBase;
-        public AttendanceService(IRepositoryBase<Attendance> attendanceRepositoryBase)
+        private readonly IRepositoryBase<Member> _memberRepositoryBase;
+        private readonly IRepositoryBase<Employee> _employeeRepositoryBase;
+        private readonly IAttendanceRepository _attendanceRepository;
+        public AttendanceService(IRepositoryBase<Attendance> attendanceRepositoryBase, IRepositoryBase<Employee> employeeRepositoryBase, IAttendanceRepository attendanceRepository)
         {
             _attendanceRepositoryBase = attendanceRepositoryBase;
+            _employeeRepositoryBase = employeeRepositoryBase;
+            _attendanceRepository = attendanceRepository;
         }
 
         public Attendance Create(CreationAttendanceDto creationAttendaceDto)
         {
-            var newAttendace = new Attendance
+            var newAttendance = new Attendance();
+            
+            if (creationAttendaceDto.MemberId == 0)
             {
-                UserId = creationAttendaceDto.UserId,
-                Date = creationAttendaceDto.Date,
-                EmployeeId = creationAttendaceDto.EmployeeId
-            };
-            return _attendanceRepositoryBase.create(newAttendace);
+                var employee = _employeeRepositoryBase.GetById(creationAttendaceDto.EmployeeId.Value);
+                newAttendance.MemberId = null;
+                newAttendance.EmployeeId = creationAttendaceDto.EmployeeId;
+                newAttendance.Date = creationAttendaceDto.Date; 
+                newAttendance.Employee = employee;
+            }
+            if (creationAttendaceDto.EmployeeId == 0)
+            {
+                var member = _memberRepositoryBase.GetById(creationAttendaceDto.MemberId.Value);
+                newAttendance.MemberId = creationAttendaceDto.MemberId;
+                newAttendance.EmployeeId = null;
+                newAttendance.Date = creationAttendaceDto.Date;
+                newAttendance.Member = member;
+
+            }
+            return _attendanceRepositoryBase.create(newAttendance);
 
         }
 
@@ -42,15 +60,16 @@ namespace Application.Services
 
         public List<AttendanceDto> GetAllAttendaces()
         {
-            var attendances = _attendanceRepositoryBase.GetAll();
+            var attendances = _attendanceRepository.GetAll();
             var attendanceDtos = AttendanceDto.FromEntityList(attendances);
             return attendanceDtos;
         }
 
         public AttendanceDto GetById(int id)
         {
-            var attendance = _attendanceRepositoryBase.GetById(id);
+            var attendance = _attendanceRepository.GetById(id);
             return AttendanceDto.FromEntity(attendance);
+
 
         }
 
@@ -59,7 +78,7 @@ namespace Application.Services
             var attendanceToUpdate = _attendanceRepositoryBase.GetById(id);
             if (attendanceToUpdate != null)
             {
-                attendanceToUpdate.UserId = creationAttendaceDto.UserId;
+                attendanceToUpdate.MemberId = creationAttendaceDto.MemberId;
                 attendanceToUpdate.Date = creationAttendaceDto.Date;
                 attendanceToUpdate.EmployeeId = creationAttendaceDto.EmployeeId;
                 _attendanceRepositoryBase.Update(attendanceToUpdate);

@@ -14,7 +14,7 @@ namespace Application.Models
         public string Name { get; set; }
         public string Email { get; set; }
         public string Password { get; set; }
-        public MemberState State { get; set; }
+        public string State { get; set; }
         public List<WorkoutClass> workoutClasses { get; set; } = new List<WorkoutClass>();
 
         public static MemberDto FromEntity(Member member)
@@ -25,7 +25,7 @@ namespace Application.Models
                 Name = member.Name,
                 Email = member.Email,
                 Password = member.Password,
-                State = member.State,
+                State = member.State.ToString(),
                 workoutClasses = member.WorkoutClasses
             };
         }

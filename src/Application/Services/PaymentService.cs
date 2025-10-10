@@ -14,9 +14,11 @@ namespace Application.Services
     public class PaymentService : IPaymentService
     {
         private readonly IRepositoryBase<Payment> _paymentRepositoryBase;
-        public PaymentService(IRepositoryBase<Payment> paymentRepositoryBase)
+        private readonly IPaymentRepository _paymentRepository;
+        public PaymentService(IRepositoryBase<Payment> paymentRepositoryBase, IPaymentRepository paymentRepository)
         {
             _paymentRepositoryBase = paymentRepositoryBase;
+            _paymentRepository = paymentRepository;
         }
 
         public Payment Create(CreationPaymentDto creationPaymentDto)
@@ -40,14 +42,14 @@ namespace Application.Services
 
         public List<PaymentDto> GetAllPayments()
         {
-            var payments = _paymentRepositoryBase.GetAll();
+            var payments = _paymentRepository.GetAll();
             var paymentDtos = PaymentDto.FromEntityList(payments);
             return paymentDtos;
         }
 
         public PaymentDto GetById(int id)
         {
-            var payment = _paymentRepositoryBase.GetById(id);
+            var payment = _paymentRepository.GetById(id);
             if (payment == null)
             {
                 return null;

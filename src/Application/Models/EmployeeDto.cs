@@ -16,7 +16,7 @@ namespace Application.Models
         public DateTime CreatedDate { get; set; }
         public DateTime? LastUpdate { get; set; }
         public decimal Salary { get; set; }
-        public EmployeeRole Role { get; set; }
+        public string Role { get; set; }
 
         public static EmployeeDto FromEntity(Employee employee)
         {
@@ -32,7 +32,7 @@ namespace Application.Models
                 CreatedDate = employee.CreatedDate,
                 LastUpdate = employee.LastUpdate,
                 Salary = employee.Salary,
-                Role = employee.Role
+                Role = employee.Role.ToString()
 
             };
             return employeeDto;

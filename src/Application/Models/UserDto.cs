@@ -24,6 +24,7 @@ namespace Application.Models
                 Email = user.Email,
                 CreatedDate = user.CreatedDate,
                 LastUpdate = user.LastUpdate
+                
             };
             return userDto;
         }
