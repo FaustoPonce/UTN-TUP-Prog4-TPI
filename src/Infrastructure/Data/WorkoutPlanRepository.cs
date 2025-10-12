@@ -18,12 +18,12 @@ namespace Infrastructure.Data
         }
         public List<WorkoutPlan> GetAll()
         {
-            return _context.WorkoutPlans.Include(w => w.Member).ToList();
+            return _context.WorkoutPlans.Include(w => w.Member).ThenInclude(m => m.WorkoutClasses).ToList();
         }
 
         public WorkoutPlan GetById(int id)
         {
-            return _context.WorkoutPlans.Include(w => w.Member).FirstOrDefault(p => p.Id == id);
+            return _context.WorkoutPlans.Include(w => w.Member).ThenInclude(m => m.WorkoutClasses).FirstOrDefault(p => p.Id == id);
         }
     }
 }

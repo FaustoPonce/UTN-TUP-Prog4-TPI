@@ -15,11 +15,13 @@ namespace Application.Services
     {
         private readonly IRepositoryBase<Member> _memberRepositoryBase;
         private readonly IMemberRepository _memberRepository;
+        private readonly IWorkoutClassRepository _workoutClassRepository;
 
-        public MemberService(IRepositoryBase<Member> memberRepositoryBase, IMemberRepository memberRepository)
+        public MemberService(IRepositoryBase<Member> memberRepositoryBase, IMemberRepository memberRepository, IWorkoutClassRepository workoutClassRepository)
         {
             _memberRepositoryBase = memberRepositoryBase;
             _memberRepository = memberRepository;
+            _workoutClassRepository = workoutClassRepository;
         }
 
         public Member Create(CreationMemberDto creationMemberDto)
@@ -32,6 +34,19 @@ namespace Application.Services
                 State = creationMemberDto.State,
                 
             };
+            if (creationMemberDto.WorkoutClassesID != null && creationMemberDto.WorkoutClassesID.Any()) 
+                {   
+                    var workoutClasses = new List<WorkoutClass>();
+                    foreach (var id in creationMemberDto.WorkoutClassesID) 
+                    {   
+                        var workoutClass = _workoutClassRepository.GetById(id);
+                        if (workoutClass != null) 
+                        { 
+                        workoutClasses.Add(workoutClass);
+                        }
+                    }
+                    newMember.WorkoutClasses = workoutClasses;
+            }
             return _memberRepositoryBase.create(newMember);
         }
 

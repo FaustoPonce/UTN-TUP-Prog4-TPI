@@ -17,7 +17,7 @@ namespace Application.Models
         public Schedule Schedule { get; set; }
         public int EmployeeId { get; set; }
         public Employee Employee { get; set; }
-        public List<Member> Members { get; set; } = new List<Member>();
+        public List<string> Members { get; set; } = new List<string>();
 
         public static WorkoutClassDto FromEntity(WorkoutClass workoutClass)
         {
@@ -30,9 +30,14 @@ namespace Application.Models
                 Schedule = workoutClass.Schedule,
                 EmployeeId = workoutClass.EmployeeId,
                 Employee = workoutClass.Employee,
-                Members = workoutClass.Members
-
             };
+            if (workoutClass.Members != null) 
+            {
+                foreach (var member in workoutClass.Members) 
+                {
+                    workoutClassDto.Members.Add(member.Name);
+                }
+            }
             return workoutClassDto;
 
         }

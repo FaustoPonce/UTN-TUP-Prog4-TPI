@@ -15,19 +15,29 @@ namespace Application.Models
         public string Email { get; set; }
         public string Password { get; set; }
         public string State { get; set; }
-        public List<WorkoutClass> workoutClasses { get; set; } = new List<WorkoutClass>();
+        public List<int> WorkoutClassesId { get; set; } = new List<int>();
+        public List<string> workoutClasses { get; set; } = new List<string>();
 
         public static MemberDto FromEntity(Member member)
         {
-            return new MemberDto
+            var dto = new MemberDto
             {
                 Id = member.Id,
                 Name = member.Name,
                 Email = member.Email,
                 Password = member.Password,
-                State = member.State.ToString(),
-                workoutClasses = member.WorkoutClasses
+                State = member.State.ToString()
             };
+            if (member.WorkoutClasses != null) 
+            {
+                foreach (var wc in member.WorkoutClasses) 
+                { 
+                    dto.WorkoutClassesId.Add(wc.Id);
+                    var Workoutclassdto = WorkoutClassDto.FromEntity(wc);
+                    if (Workoutclassdto != null) dto.workoutClasses.Add(Workoutclassdto.Name);
+                }
+            }
+            return dto;
         }
 
         public static List<MemberDto> FromEntityList(List<Member> memberlist)

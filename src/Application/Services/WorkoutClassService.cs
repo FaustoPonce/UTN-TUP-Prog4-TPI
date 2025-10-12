@@ -14,10 +14,14 @@ namespace Application.Services
     public class WorkoutClassService : IWorkoutClassService
     {
         private readonly IRepositoryBase<WorkoutClass> _workoutClassRepositoryBase;
+        private readonly IWorkoutClassRepository _workoutClassRepository;
+        private readonly IMemberRepository _memberRepository;
 
-        public WorkoutClassService(IRepositoryBase<WorkoutClass> workoutClassRepositoryBase)
+        public WorkoutClassService(IRepositoryBase<WorkoutClass> workoutClassRepositoryBase, IWorkoutClassRepository workoutClassRepository, IMemberRepository memberRepository)
         {
             _workoutClassRepositoryBase = workoutClassRepositoryBase;
+            _workoutClassRepository = workoutClassRepository;
+            _memberRepository = memberRepository;
         }
 
         public WorkoutClass Create(CreationWorkoutClassDto creationWorkoutClassDto)
@@ -30,6 +34,19 @@ namespace Application.Services
                 EmployeeId = creationWorkoutClassDto.EmployeeId,
                 
             };
+            if (creationWorkoutClassDto.IdMembers != null && creationWorkoutClassDto.IdMembers.Any())
+            {
+                var members = new List<Member>();
+                foreach (var id in creationWorkoutClassDto.IdMembers)
+                {
+                    var member = _memberRepository.GetById(id);
+                    if (member != null)
+                    {
+                        members.Add(member);
+                    }
+                }
+                newWorkoutClass.Members = members;
+            }
             return _workoutClassRepositoryBase.create(newWorkoutClass);
         }
 
@@ -44,7 +61,7 @@ namespace Application.Services
 
         public List<WorkoutClassDto> GetAllWorkoutClass()
         {
-            var workoutClasss = _workoutClassRepositoryBase.GetAll();
+            var workoutClasss = _workoutClassRepository.GetAll();
             var workoutClassDtos = WorkoutClassDto.FromEntityList(workoutClasss);
             return workoutClassDtos;
 
@@ -52,7 +69,7 @@ namespace Application.Services
 
         public WorkoutClassDto GetById(int id)
         {
-            var workoutClass = _workoutClassRepositoryBase.GetById(id);
+            var workoutClass = _workoutClassRepository.GetById(id);
             if (workoutClass == null)
             {
                 return null;

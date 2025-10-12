@@ -16,6 +16,6 @@ namespace Application.Models.Request
         public Schedule Schedule { get; set; }
         public int EmployeeId { get; set; }
         // Lista de ids de miembros que asistirán a la clase MODIFICAR DESPUES DECIDIR COMO HACERLO
-        //public List<int> IdMembers { get; set; } = new List<int>();
+        public List<int> IdMembers { get; set; } = new List<int>();
     }
 }

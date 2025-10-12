@@ -14,6 +14,7 @@ namespace Application.Models.Request
         public string Email { get; set; }
         public string Password { get; set; }
         public MemberState State { get; set; }
-   
-    }
+        public List<int> WorkoutClassesID { get; set; } = new List<int>();
+
+        }
 }

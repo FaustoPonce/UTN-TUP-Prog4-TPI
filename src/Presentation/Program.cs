@@ -43,6 +43,7 @@ builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
 builder.Services.AddScoped<IWorkoutPlanRepository, WorkoutPlanRepository>();
 builder.Services.AddScoped<IAttendanceRepository, AttendanceRepository>();
 builder.Services.AddScoped<IMemberRepository, MemberRepository>();
+builder.Services.AddScoped<IWorkoutClassRepository, WorkoutClassRepository>();
 
 var app = builder.Build();
 
