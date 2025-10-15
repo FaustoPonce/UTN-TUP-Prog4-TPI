@@ -1,5 +1,6 @@
 ﻿using Application.Interfaces;
 using Application.Models.Request;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -26,17 +27,20 @@ namespace Presentation.Controllers
             return Ok(_workoutPlanService.GetById(id));
         }
         [HttpPost]
+        [Authorize]
         public ActionResult Create([FromBody] CreationWorkoutPlanDto creationWorkoutPlanDto)
         {
             return Ok(_workoutPlanService.Create(creationWorkoutPlanDto));
         }
         [HttpPut("{id}")]
+        [Authorize]
         public ActionResult Update([FromRoute] int id, [FromBody] CreationWorkoutPlanDto creationWorkoutPlanDto)
         {
             _workoutPlanService.Update(id, creationWorkoutPlanDto);
             return Ok();
         }
         [HttpDelete("{id}")]
+        [Authorize]
         public ActionResult Delete([FromRoute] int id)
         {
             _workoutPlanService.Delete(id);

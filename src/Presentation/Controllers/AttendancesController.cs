@@ -1,5 +1,6 @@
 ﻿using Application.Interfaces;
 using Application.Models.Request;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -25,17 +26,20 @@ namespace Presentation.Controllers
             return Ok(_attendanceService.GetById(id));
         }
         [HttpPost]
+        [Authorize]
         public ActionResult Create([FromBody] CreationAttendanceDto creationAttendaceDto)
         {
             return Ok(_attendanceService.Create(creationAttendaceDto));
         }
         [HttpPut("{id}")]
+        [Authorize]
         public ActionResult Update([FromRoute] int id, [FromBody] CreationAttendanceDto creationAttendaceDto)
         {
             _attendanceService.Update(id, creationAttendaceDto);
             return Ok();
         }
         [HttpDelete("{id}")]
+        [Authorize]
         public ActionResult Delete([FromRoute] int id)
         {
             _attendanceService.Delete(id);
