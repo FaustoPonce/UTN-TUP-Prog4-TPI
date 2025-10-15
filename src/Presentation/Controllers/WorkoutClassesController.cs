@@ -2,6 +2,7 @@
 using Application.Models;
 using Application.Models.Request;
 using Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -35,18 +36,21 @@ namespace Presentation.Controllers
             return Ok(workoutClass);
         }
         [HttpPost]
+        [Authorize]
         public ActionResult<WorkoutClass> CreateWorkoutClass([FromBody] CreationWorkoutClassDto creationWorkoutClassDto)
         {
             var createdWorkoutClass = _workoutClassService.Create(creationWorkoutClassDto);
             return Ok(createdWorkoutClass);
         }
         [HttpDelete("{id}")]
+        [Authorize]
         public ActionResult DeleteWorkoutClass(int id)
         {
             _workoutClassService.Delete(id);
             return NoContent();
         }
         [HttpPut("{id}")]
+        [Authorize]
         public ActionResult UpdateWorkoutClass(int id, [FromBody] CreationWorkoutClassDto creationWorkoutClassDto)
         {
             _workoutClassService.Update(id, creationWorkoutClassDto);

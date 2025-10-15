@@ -1,5 +1,6 @@
 ﻿using Application.Interfaces;
 using Application.Models.Request;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -27,17 +28,20 @@ namespace Presentation.Controllers
 
         }
         [HttpPost]
+        [Authorize]
         public ActionResult Create([FromBody] CreationMemberDto creationMemberDto)
         {
             return Ok(_memberService.Create(creationMemberDto));
         }
         [HttpDelete("{id}")]
+        [Authorize]
         public ActionResult DeleteMember(int id)
         {
             _memberService.Delete(id);
             return NoContent();
         }
         [HttpPut("{id}")]
+        [Authorize]
         public ActionResult UpdateMember(int id, [FromBody] CreationMemberDto creationMemberDto)
         {
             _memberService.Update(id, creationMemberDto);

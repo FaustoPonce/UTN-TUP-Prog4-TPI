@@ -2,6 +2,7 @@
 using Application.Models;
 using Application.Models.Request;
 using Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -27,17 +28,20 @@ namespace Presentation.Controllers
             return Ok(_adminService.GetById(id));
         }
         [HttpPost]
+        [Authorize]
         public ActionResult<Admin> Create([FromBody] CreationAdminDto creationAdminDto)
         {
             return Ok(_adminService.Create(creationAdminDto));
         }
         [HttpPut("{id}")]
+        [Authorize]
         public ActionResult Update([FromRoute] int id, [FromBody] CreationAdminDto creationAdminDto)
         {
             _adminService.Update(id, creationAdminDto);
             return Ok();
         }
         [HttpDelete("{id}")]
+        [Authorize]
         public ActionResult Delete([FromRoute] int id)
         {
             _adminService.Delete(id);

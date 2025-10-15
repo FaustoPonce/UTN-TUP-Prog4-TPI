@@ -1,6 +1,7 @@
 ﻿using Application.Interfaces;
 using Application.Models;
 using Application.Models.Request;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -29,12 +30,14 @@ namespace Presentation.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public ActionResult<EmployeeDto> Create([FromBody] CreationEmployeeDto creationEmployeeDto)
         {
             return Ok(_employeeService.Create(creationEmployeeDto));
         }
 
         [HttpPut("{id}")]
+        [Authorize]
         public ActionResult Update([FromRoute] int id, [FromBody] CreationEmployeeDto creationEmployeeDto)
         {
             _employeeService.Update(id, creationEmployeeDto);
@@ -42,6 +45,7 @@ namespace Presentation.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize]
         public ActionResult Delete([FromRoute] int id)
         {
             _employeeService.Delete(id);
