@@ -9,6 +9,9 @@ namespace Application.Interfaces
 {
     public interface IjokeService
     {
-        Task<string> GetRandomJokeAsync();
+        Task<JokeDto> GetRandomJokeAsync();
+        Task<JokeDto> GetJokeByIdAsync(int id);
+        Task<List<JokeDto>> GetRandomJokeByTypeAsync(string type);
+        Task<List<string>> GetJokeTypes();
     }
 }
