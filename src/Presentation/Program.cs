@@ -2,6 +2,7 @@ using Application.Interfaces;
 using Application.Services;
 using Domain.Entities;
 using Domain.Interfaces;
+using Infrastructure;
 using Infrastructure.Data;
 using Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
@@ -42,6 +43,18 @@ builder.Services.AddSwaggerGen(setupAction =>
 }
 );
 
+builder.Services.AddHttpClient(
+    "APIHttpclient",
+    client =>
+    {
+        client.BaseAddress = new Uri("https://official-joke-api.appspot.com/");
+        client.DefaultRequestHeaders.Add("Accept", "application/json");
+
+    })
+    .AddPolicyHandler(PollyResiliencePolicies.GetRetryPolicy())
+    .AddPolicyHandler(PollyResiliencePolicies.GetCircuitBreakerPolicy());
+
+
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -72,6 +85,7 @@ builder.Services.AddScoped<IAttendanceService, AttendanceService>();
 builder.Services.AddScoped<IPaymentService, PaymentService>();
 builder.Services.AddScoped<IWorkoutClassService, WorkoutClassService>();
 builder.Services.AddScoped<IAuthenticacionService, AuthenticacionService>();
+builder.Services.AddScoped<IjokeService, JokeService>();
 
 // Inyeccion de dependencias de repositorios
 builder.Services.AddScoped<IRepositoryBase<User>, RepositoryBase<User>>();
