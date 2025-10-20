@@ -2,6 +2,7 @@
 using Application.Models;
 using Application.Models.Request;
 using Domain.Entities;
+using Domain.Exceptions;
 using Domain.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -15,14 +16,24 @@ namespace Application.Services
     {
         private readonly IRepositoryBase<Payment> _paymentRepositoryBase;
         private readonly IPaymentRepository _paymentRepository;
-        public PaymentService(IRepositoryBase<Payment> paymentRepositoryBase, IPaymentRepository paymentRepository)
+        private readonly IRepositoryBase<Member> _memberRepositoryBase;
+        public PaymentService(IRepositoryBase<Payment> paymentRepositoryBase, IPaymentRepository paymentRepository, IRepositoryBase<Member> memberRepositoryBase)
         {
             _paymentRepositoryBase = paymentRepositoryBase;
             _paymentRepository = paymentRepository;
+            _memberRepositoryBase = memberRepositoryBase;
         }
 
         public Payment Create(CreationPaymentDto creationPaymentDto)
-        {
+        {   
+            if (creationPaymentDto.Amount <= 0)
+            {
+                throw new ValidationException("El monto del pago debe ser mayor a cero.");
+            }
+            if (_memberRepositoryBase.GetById(creationPaymentDto.MemberId) == null)
+            {
+                throw new NotFoundException($"No se encontro un miembro con id {creationPaymentDto.MemberId} para asociar el pago.");
+            }
             var newPayment = new Payment
             {
                 Amount = creationPaymentDto.Amount,
@@ -34,15 +45,20 @@ namespace Application.Services
         public void Delete(int id)
         {
             var paymentToDelete = _paymentRepositoryBase.GetById(id);
-            if (paymentToDelete != null)
+            if (paymentToDelete == null)
             {
-                _paymentRepositoryBase.Delete(paymentToDelete);
+                throw new NotFoundException($"No existe un pago con id {id}");
             }
+            _paymentRepositoryBase.Delete(paymentToDelete);
         }
 
         public List<PaymentDto> GetAllPayments()
         {
             var payments = _paymentRepository.GetAll();
+            if (payments == null || payments.Count == 0)
+            {
+                throw new NotFoundException("No existen pagos todavia");
+            }
             var paymentDtos = PaymentDto.FromEntityList(payments);
             return paymentDtos;
         }
@@ -52,7 +68,7 @@ namespace Application.Services
             var payment = _paymentRepository.GetById(id);
             if (payment == null)
             {
-                return null;
+                throw new NotFoundException($"No existe un pago con id {id}");
             }
             return PaymentDto.FromEntity(payment);
         }
@@ -60,14 +76,15 @@ namespace Application.Services
         public void Update(int id, CreationPaymentDto creationPaymentDto)
         {
             var paymentToUpdate = _paymentRepositoryBase.GetById(id);
-            if (paymentToUpdate != null)
+            if (paymentToUpdate == null)
             {
-                paymentToUpdate.Amount = creationPaymentDto.Amount;
-                paymentToUpdate.Date = DateTime.Now;
-                paymentToUpdate.PaymentMethod = creationPaymentDto.PaymentMethod;
-                paymentToUpdate.MemberId = creationPaymentDto.MemberId;
-                _paymentRepositoryBase.Update(paymentToUpdate);
+                throw new NotFoundException($"No existe un pago con id {id}");
             }
+            paymentToUpdate.Amount = creationPaymentDto.Amount;
+            paymentToUpdate.Date = DateTime.Now;
+            paymentToUpdate.PaymentMethod = creationPaymentDto.PaymentMethod;
+            paymentToUpdate.MemberId = creationPaymentDto.MemberId;
+            _paymentRepositoryBase.Update(paymentToUpdate);
         }
     }
 }

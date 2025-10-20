@@ -25,10 +25,11 @@ namespace Infrastructure.Services
             _config = config;
         }
 
-        private Admin? validateAdmin(string email, string password) 
-        { 
+        private Admin? validateAdmin(string email, string password)
+        {
             Admin? admin = _adminRepository.GetByEmail(email);
-
+        
+           
             if (admin is null) return null;
             if (admin.Password != password) return null;
             return admin;
@@ -51,6 +52,10 @@ namespace Infrastructure.Services
             var claimsForToken = new List<Claim>();
             claimsForToken.Add(new Claim("sub", validatedAdmin.Id.ToString()));
 
+            //claimsForToken.Add(new Claim("role", validatedUser.Role.ToString()))
+
+
+
             var jwtSecurityToken = new JwtSecurityToken(
                 _config["Authentication:Issuer"],
                 _config["Authentication:Audience"],
@@ -62,6 +67,9 @@ namespace Infrastructure.Services
 
             var tokenToReturn = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);
 
+            //var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier || c.Type == "sub")?.Value;
+            // esta linea chequearia el ID si quiesiera traermelo en un login por ejemplo 
+        
             return tokenToReturn.ToString();
         }
     }

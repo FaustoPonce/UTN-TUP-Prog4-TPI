@@ -2,6 +2,7 @@
 using Application.Models;
 using Application.Models.Request;
 using Domain.Entities;
+using Domain.Exceptions;
 using Domain.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -28,7 +29,11 @@ namespace Application.Services
             var member = _memberRepositoryBase.GetById(creationWorkoutPlanDto.MemberId);
             if (member == null)
             {
-                throw new ArgumentException($"Member with ID {creationWorkoutPlanDto.MemberId} does not exist.");
+                throw new NotFoundException($"No existe un miembro con id {creationWorkoutPlanDto.MemberId}");
+            }
+            if (creationWorkoutPlanDto.Price < 0)
+            {
+                throw new ValidationException("El precio del plan de entrenamiento no puede ser negativo o 0");
             }
             var newWorkoutPlan = new WorkoutPlan
             {
@@ -44,16 +49,21 @@ namespace Application.Services
         public void Delete(int id)
         {   
             var workoutPlanToDelete = _workoutPlanRepositoryBase.GetById(id);
-            if (workoutPlanToDelete != null)
+            if (workoutPlanToDelete == null)
             {
-                _workoutPlanRepositoryBase.Delete(workoutPlanToDelete); 
+                throw new NotFoundException($"No existe un plan de entrenamiento con id {id}");
             }
-            
+            _workoutPlanRepositoryBase.Delete(workoutPlanToDelete);
+
         }
 
         public List<WorkoutPlanDto> GetAllWorkoutPlans()
         {
             var workoutPlans = _workoutPlanRepository.GetAll();
+            if (workoutPlans == null || workoutPlans.Count == 0)
+            {
+                throw new NotFoundException("No existen planes de entrenamiento todavia");
+            }
             var workoutPlanDtos = WorkoutPlanDto.FromEntityList(workoutPlans);
             return workoutPlanDtos;
         }
@@ -63,7 +73,7 @@ namespace Application.Services
             var workoutPlan = _workoutPlanRepository.GetById(id);
             if (workoutPlan == null)
             {
-                return null;
+                throw new NotFoundException($"No existe un plan de entrenamiento con id {id}");
             }
             var workoutPlanDto = WorkoutPlanDto.FromEntity(workoutPlan);
             return workoutPlanDto;
@@ -73,20 +83,21 @@ namespace Application.Services
         public void Update(int id, CreationWorkoutPlanDto creationWorkoutPlanDto)
         {
             var workoutPlanToUpdate = _workoutPlanRepositoryBase.GetById(id);
+            if (workoutPlanToUpdate == null) {
+                throw new NotFoundException($"No existe un plan de entrenamiento con id {id}");
+            }
             var member = _memberRepositoryBase.GetById(creationWorkoutPlanDto.MemberId);
             if (member == null)
             {
-                throw new ArgumentException($"Member with ID {creationWorkoutPlanDto.MemberId} does not exist.");
+                throw new NotFoundException($"No existe un miembro con id {creationWorkoutPlanDto.MemberId}");
             }
-            if (workoutPlanToUpdate != null)
-            {
             workoutPlanToUpdate.Name = creationWorkoutPlanDto.Name;
             workoutPlanToUpdate.Description = creationWorkoutPlanDto.Description;
             workoutPlanToUpdate.Price = creationWorkoutPlanDto.Price;
             workoutPlanToUpdate.MemberId = creationWorkoutPlanDto.MemberId;
             workoutPlanToUpdate.Member = member;
             _workoutPlanRepositoryBase.Update(workoutPlanToUpdate);
-            }
+           
         }
     }
 }

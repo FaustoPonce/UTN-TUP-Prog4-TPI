@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Domain.Enums;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -17,5 +18,7 @@ namespace Domain.Entities
         public string Password { get; set; }
         public DateTime CreatedDate { get; set; } = DateTime.Now;
         public DateTime? LastUpdate { get; set; }
+
+        //public string role 
     }
 }
