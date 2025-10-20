@@ -2,6 +2,7 @@
 using Application.Models;
 using Application.Models.Request;
 using Domain.Entities;
+using Domain.Exceptions;
 using Domain.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -16,16 +17,22 @@ namespace Application.Services
         private readonly IRepositoryBase<WorkoutClass> _workoutClassRepositoryBase;
         private readonly IWorkoutClassRepository _workoutClassRepository;
         private readonly IMemberRepository _memberRepository;
+        private readonly IRepositoryBase<Employee> _employeeRepositoryBase;
 
-        public WorkoutClassService(IRepositoryBase<WorkoutClass> workoutClassRepositoryBase, IWorkoutClassRepository workoutClassRepository, IMemberRepository memberRepository)
+        public WorkoutClassService(IRepositoryBase<WorkoutClass> workoutClassRepositoryBase, IWorkoutClassRepository workoutClassRepository, IMemberRepository memberRepository, IRepositoryBase<Employee> memberRepositoryBase)
         {
             _workoutClassRepositoryBase = workoutClassRepositoryBase;
             _workoutClassRepository = workoutClassRepository;
             _memberRepository = memberRepository;
+            _employeeRepositoryBase = memberRepositoryBase;
         }
 
         public WorkoutClass Create(CreationWorkoutClassDto creationWorkoutClassDto)
         {
+            if (_employeeRepositoryBase.GetById(creationWorkoutClassDto.EmployeeId) == null)
+            {
+                throw new ValidationException($"No se encontro un empleado con id {creationWorkoutClassDto.EmployeeId} para asociar la clase.");
+            }
             var newWorkoutClass = new WorkoutClass
             {
                 Name = creationWorkoutClassDto.Name,
@@ -40,10 +47,11 @@ namespace Application.Services
                 foreach (var id in creationWorkoutClassDto.IdMembers)
                 {
                     var member = _memberRepository.GetById(id);
-                    if (member != null)
+                    if (member == null)
                     {
-                        members.Add(member);
+                        throw new NotFoundException($"No se encontro un miembro con id {id} en relacion con esta clase");
                     }
+                    members.Add(member);
                 }
                 newWorkoutClass.Members = members;
             }
@@ -53,15 +61,20 @@ namespace Application.Services
         public void Delete(int id)
         {
             var WorkoutClassToDelete = _workoutClassRepositoryBase.GetById(id);
-            if (WorkoutClassToDelete != null)
+            if (WorkoutClassToDelete == null)
             {
-                _workoutClassRepositoryBase.Delete(WorkoutClassToDelete);
+                throw new NotFoundException($"No existe una clase con id {id}");
             }
+            _workoutClassRepositoryBase.Delete(WorkoutClassToDelete);
         }
 
         public List<WorkoutClassDto> GetAllWorkoutClass()
         {
             var workoutClasss = _workoutClassRepository.GetAll();
+            if (workoutClasss == null || workoutClasss.Count == 0)
+            {
+                throw new NotFoundException("No existen clases todavia");
+            }
             var workoutClassDtos = WorkoutClassDto.FromEntityList(workoutClasss);
             return workoutClassDtos;
 
@@ -72,7 +85,7 @@ namespace Application.Services
             var workoutClass = _workoutClassRepository.GetById(id);
             if (workoutClass == null)
             {
-                return null;
+                throw new NotFoundException($"No existe una clase con id {id}");
             }
             var workoutClassDto = WorkoutClassDto.FromEntity(workoutClass);
             return workoutClassDto;
@@ -84,12 +97,13 @@ namespace Application.Services
             
             if (workoutClassToUpdate != null)
             {
-                workoutClassToUpdate.Name = creationWorkoutClassDto.Name;
-                workoutClassToUpdate.Description = creationWorkoutClassDto.Description;
-                workoutClassToUpdate.Schedule = creationWorkoutClassDto.Schedule;
-                workoutClassToUpdate.EmployeeId = creationWorkoutClassDto.EmployeeId;
-                _workoutClassRepositoryBase.Update(workoutClassToUpdate);
+                throw new NotFoundException($"No existe una clase con id {id}");
             }
+            workoutClassToUpdate.Name = creationWorkoutClassDto.Name;
+            workoutClassToUpdate.Description = creationWorkoutClassDto.Description;
+            workoutClassToUpdate.Schedule = creationWorkoutClassDto.Schedule;
+            workoutClassToUpdate.EmployeeId = creationWorkoutClassDto.EmployeeId;
+            _workoutClassRepositoryBase.Update(workoutClassToUpdate);
         }
     }
 }

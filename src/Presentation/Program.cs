@@ -8,6 +8,7 @@ using Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Presentation.Middlewares;
 using System.Text;
 using System.Text.Json.Serialization;
 
@@ -67,6 +68,7 @@ builder.Services.AddAuthentication("Bearer").AddJwtBearer(options =>
             ValidateIssuer = true,
             ValidateAudience = true,
             ValidateIssuerSigningKey = true,
+            //ClockSkew = TimeSpan.Zero, esto saca los 5 minutos de tolerancia que tiene el token por defecto
             ValidIssuer = builder.Configuration["Authentication:Issuer"],
             ValidAudience = builder.Configuration["Authentication:Audience"],
             IssuerSigningKey = new SymmetricSecurityKey(
@@ -103,8 +105,14 @@ builder.Services.AddScoped<IMemberRepository, MemberRepository>();
 builder.Services.AddScoped<IWorkoutClassRepository, WorkoutClassRepository>();
 builder.Services.AddScoped<IAdminRepository, AdminRepository>();
 
+// Inyeccion del middleware de manejo de errores
+builder.Services.AddTransient<CentralizedExceptionMiddleware>();
+
+
 var app = builder.Build();
 
+// ponemos el middleware en el pipeline
+app.UseMiddleware<CentralizedExceptionMiddleware>();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {

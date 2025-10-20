@@ -7,6 +7,7 @@ using Application.Interfaces;
 using Application.Models;
 using Application.Models.Request;
 using Domain.Entities;
+using Domain.Exceptions;
 using Domain.Interfaces;
 
 namespace Application.Services
@@ -23,19 +24,27 @@ namespace Application.Services
         public List<UserDto> GetAllUsers()
         {
             List<User> users = _userRepositoryBase.GetAll();
+            if (users == null || users.Count == 0)
+            {
+                throw new NotFoundException("No hay usuarios todavia");
+            }
             List<UserDto> userDtos = UserDto.FromEntityList(users);
             return userDtos;
         }
 
         public User Create(CreationUserDto creationUserDto) 
         {
+            if (!creationUserDto.Email.Contains("@"))
+            {
+                throw new ValidationException("El email no es valido. Debe contener un '@'.");
+            }
             var newUser = new User
             {
                 Name = creationUserDto.Name,
                 Email = creationUserDto.Email,
                 Password = creationUserDto.Password,
             };
-            
+
             return _userRepositoryBase.create(newUser);
         }
 
@@ -44,7 +53,7 @@ namespace Application.Services
             var user = _userRepositoryBase.GetById(id);
             if (user == null)
             {
-                return null;
+                throw new NotFoundException($"No hay un usuario con id {id}");
             }
             var userDto = UserDto.FromEntity(user);
             return userDto;
@@ -52,12 +61,11 @@ namespace Application.Services
 
         public void Update(int id, CreationUserDto creationUserDto)
         {   
-            Console.WriteLine($"Updating user with ID: {id}");
+            
             var userToUpdate = _userRepositoryBase.GetById(id);
             if (userToUpdate == null) 
             {
-                Console.WriteLine($"User with ID: {id} not found.");
-                return;
+                throw new NotFoundException($"No hay un usuario con id {id}");
             }
             else
             {
@@ -72,10 +80,11 @@ namespace Application.Services
         public void Delete(int id)
         {
             var userToDelete = _userRepositoryBase.GetById(id);
-            if (userToDelete != null)
+            if (userToDelete == null)
             {
-                _userRepositoryBase.Delete(userToDelete);
+                throw new NotFoundException($"No hay un usuario con id {id}");
             }
+            _userRepositoryBase.Delete(userToDelete);
         }
     }
 }

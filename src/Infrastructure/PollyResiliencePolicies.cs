@@ -19,7 +19,7 @@ namespace Infrastructure
                     sleepDurationProvider: retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)), // Exponential Backoff
                     onRetry: (outcome, timespan, retryAttempt, context) =>
                     {
-                        Console.WriteLine($"Intento {retryAttempt} fallido. Reintentando en {timespan.TotalSeconds} segundos...");
+                        Console.WriteLine($"Intento {retryAttempt} fallado. Reintentando en {timespan.TotalSeconds} segundos");
                     });
         }
 
@@ -32,9 +32,9 @@ namespace Infrastructure
                     durationOfBreak: TimeSpan.FromSeconds(30),
                     onBreak: (outcome, breakDelay) =>
                     {
-                        Console.WriteLine($"Circuito abierto durante {breakDelay.TotalSeconds} segundos debido a errores.");
+                        Console.WriteLine($"Circuito abierto durante {breakDelay.TotalSeconds} segundos por a errores.");
                     },
-                    onReset: () => Console.WriteLine("Circuito cerrado. Reanudando llamadas..."));
+                    onReset: () => Console.WriteLine("Circuito cerrado. Reanudando llamadas"));
         }
 
     }

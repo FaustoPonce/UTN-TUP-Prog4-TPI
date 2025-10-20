@@ -2,6 +2,7 @@
 using Application.Models;
 using Application.Models.Request;
 using Domain.Entities;
+using Domain.Exceptions;
 using Domain.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -19,7 +20,11 @@ namespace Application.Services
             _employeeRepositoryBase = employeeRepositoryBase;
         }
         public Employee Create(CreationEmployeeDto creationEmployeeDto)
-        {
+        {   
+            if (!creationEmployeeDto.Email.Contains("@"))
+            {
+                throw new ValidationException("El email no es valido. Debe contener un '@'.");
+            }
             var newEmployee = new Employee
             {
                 Name = creationEmployeeDto.Name,
@@ -34,15 +39,20 @@ namespace Application.Services
         public void Delete(int id)
         {
             var employeeToDelete = _employeeRepositoryBase.GetById(id);
-            if (employeeToDelete != null)
+            if (employeeToDelete == null)
             {
-                _employeeRepositoryBase.Delete(employeeToDelete);
+                throw new NotFoundException($"No existe un empleado con id {id}");
             }
+            _employeeRepositoryBase.Delete(employeeToDelete);
         }
 
         public List<EmployeeDto> GetAllEmployees()
         {
             List<Employee> employees = _employeeRepositoryBase.GetAll();
+            if (employees == null || employees.Count == 0)
+            {
+                throw new NotFoundException("No hay empleados");
+            }
             List<EmployeeDto> employeeDtos = EmployeeDto.FromEntityList(employees);
             return employeeDtos;
         }
@@ -52,7 +62,7 @@ namespace Application.Services
             var employee = _employeeRepositoryBase.GetById(id);
             if (employee == null)
             {
-                return null;
+                throw new NotFoundException($"No existe un empleado con id {id}");
             }
             var employeeDto = EmployeeDto.FromEntity(employee);
             return employeeDto;
@@ -61,16 +71,17 @@ namespace Application.Services
         public void Update(int id, CreationEmployeeDto creationEmployeeDto)
         {
             var employeeToUpdate = _employeeRepositoryBase.GetById(id);
-            if (employeeToUpdate != null)
+            if (employeeToUpdate == null)
             {
-                employeeToUpdate.Name = creationEmployeeDto.Name;
-                employeeToUpdate.Email = creationEmployeeDto.Email;
-                employeeToUpdate.Password = creationEmployeeDto.Password;
-                employeeToUpdate.Salary = creationEmployeeDto.Salary;
-                employeeToUpdate.Role = creationEmployeeDto.Role;
-                employeeToUpdate.LastUpdate = DateTime.Now;
-                _employeeRepositoryBase.Update(employeeToUpdate);
+                throw new NotFoundException($"No existe un empleado con id {id}");
             }
+            employeeToUpdate.Name = creationEmployeeDto.Name;
+            employeeToUpdate.Email = creationEmployeeDto.Email;
+            employeeToUpdate.Password = creationEmployeeDto.Password;
+            employeeToUpdate.Salary = creationEmployeeDto.Salary;
+            employeeToUpdate.Role = creationEmployeeDto.Role;
+            employeeToUpdate.LastUpdate = DateTime.Now;
+            _employeeRepositoryBase.Update(employeeToUpdate);
         }
     }
 }
