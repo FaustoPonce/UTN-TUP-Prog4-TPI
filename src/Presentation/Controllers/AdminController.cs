@@ -28,20 +28,20 @@ namespace Presentation.Controllers
             return Ok(_adminService.GetById(id));
         }
         [HttpPost]
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         public ActionResult<Admin> Create([FromBody] CreationAdminDto creationAdminDto)
         {
             return Ok(_adminService.Create(creationAdminDto));
         }
         [HttpPut("{id}")]
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         public ActionResult Update([FromRoute] int id, [FromBody] CreationAdminDto creationAdminDto)
         {
             _adminService.Update(id, creationAdminDto);
             return Ok();
         }
         [HttpDelete("{id}")]
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         public ActionResult Delete([FromRoute] int id)
         {
             _adminService.Delete(id);

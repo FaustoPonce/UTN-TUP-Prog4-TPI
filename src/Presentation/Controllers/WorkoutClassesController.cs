@@ -36,21 +36,21 @@ namespace Presentation.Controllers
             return Ok(workoutClass);
         }
         [HttpPost]
-        [Authorize]
+        [Authorize(Roles = "Admin,Recepcionista")]
         public ActionResult<WorkoutClass> CreateWorkoutClass([FromBody] CreationWorkoutClassDto creationWorkoutClassDto)
         {
             var createdWorkoutClass = _workoutClassService.Create(creationWorkoutClassDto);
             return Ok(createdWorkoutClass);
         }
         [HttpDelete("{id}")]
-        [Authorize]
+        [Authorize(Roles = "Admin,Recepcionista")]
         public ActionResult DeleteWorkoutClass(int id)
         {
             _workoutClassService.Delete(id);
             return NoContent();
         }
         [HttpPut("{id}")]
-        [Authorize]
+        [Authorize(Roles = "Admin,Recepcionista")]
         public ActionResult UpdateWorkoutClass(int id, [FromBody] CreationWorkoutClassDto creationWorkoutClassDto)
         {
             _workoutClassService.Update(id, creationWorkoutClassDto);

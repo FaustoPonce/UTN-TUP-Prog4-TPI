@@ -40,7 +40,7 @@ namespace Presentation.Middlewares
                         context.Response.StatusCode = StatusCodes.Status500InternalServerError;
                         break;
                 }
-
+                
                 // agregamos el mensaje de error que tiramos con la excepcion y escribimos la respuesta
                 var response = new { error = ex.Message };
                 await context.Response.WriteAsync(JsonSerializer.Serialize(response));

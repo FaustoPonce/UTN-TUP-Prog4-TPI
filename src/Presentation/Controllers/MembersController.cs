@@ -28,20 +28,20 @@ namespace Presentation.Controllers
 
         }
         [HttpPost]
-        [Authorize]
+        [Authorize(Roles = "Admin,Recepcionista")]
         public ActionResult Create([FromBody] CreationMemberDto creationMemberDto)
         {
             return Ok(_memberService.Create(creationMemberDto));
         }
         [HttpDelete("{id}")]
-        [Authorize]
+        [Authorize(Roles = "Admin,Recepcionista")]
         public ActionResult DeleteMember(int id)
         {
             _memberService.Delete(id);
             return NoContent();
         }
         [HttpPut("{id}")]
-        [Authorize]
+        [Authorize(Roles = "Admin,Recepcionista")]
         public ActionResult UpdateMember(int id, [FromBody] CreationMemberDto creationMemberDto)
         {
             _memberService.Update(id, creationMemberDto);

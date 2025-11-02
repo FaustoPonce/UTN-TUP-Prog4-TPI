@@ -16,7 +16,7 @@ namespace Infrastructure
                 .HandleTransientHttpError()
                 .WaitAndRetryAsync(
                     retryCount: 3,
-                    sleepDurationProvider: retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)), // Exponential Backoff
+                    sleepDurationProvider: retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)), 
                     onRetry: (outcome, timespan, retryAttempt, context) =>
                     {
                         Console.WriteLine($"Intento {retryAttempt} fallado. Reintentando en {timespan.TotalSeconds} segundos");

@@ -27,20 +27,20 @@ namespace Presentation.Controllers
             return Ok(_workoutPlanService.GetById(id));
         }
         [HttpPost]
-        [Authorize]
+        [Authorize(Roles = "Admin,Recepcionista")]
         public ActionResult Create([FromBody] CreationWorkoutPlanDto creationWorkoutPlanDto)
         {
             return Ok(_workoutPlanService.Create(creationWorkoutPlanDto));
         }
         [HttpPut("{id}")]
-        [Authorize]
+        [Authorize(Roles = "Admin,Recepcionista")]
         public ActionResult Update([FromRoute] int id, [FromBody] CreationWorkoutPlanDto creationWorkoutPlanDto)
         {
             _workoutPlanService.Update(id, creationWorkoutPlanDto);
             return Ok();
         }
         [HttpDelete("{id}")]
-        [Authorize]
+        [Authorize(Roles = "Admin,Recepcionista")]
         public ActionResult Delete([FromRoute] int id)
         {
             _workoutPlanService.Delete(id);

@@ -30,14 +30,14 @@ namespace Presentation.Controllers
         }
 
         [HttpPost]
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         public ActionResult<EmployeeDto> Create([FromBody] CreationEmployeeDto creationEmployeeDto)
         {
             return Ok(_employeeService.Create(creationEmployeeDto));
         }
 
         [HttpPut("{id}")]
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         public ActionResult Update([FromRoute] int id, [FromBody] CreationEmployeeDto creationEmployeeDto)
         {
             _employeeService.Update(id, creationEmployeeDto);
@@ -45,7 +45,7 @@ namespace Presentation.Controllers
         }
 
         [HttpDelete("{id}")]
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         public ActionResult Delete([FromRoute] int id)
         {
             _employeeService.Delete(id);

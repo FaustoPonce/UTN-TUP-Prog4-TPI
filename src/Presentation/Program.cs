@@ -104,6 +104,7 @@ builder.Services.AddScoped<IAttendanceRepository, AttendanceRepository>();
 builder.Services.AddScoped<IMemberRepository, MemberRepository>();
 builder.Services.AddScoped<IWorkoutClassRepository, WorkoutClassRepository>();
 builder.Services.AddScoped<IAdminRepository, AdminRepository>();
+builder.Services.AddScoped<IRecepcionistaRepository, RecepcionistaRepository>();
 
 // Inyeccion del middleware de manejo de errores
 builder.Services.AddTransient<CentralizedExceptionMiddleware>();

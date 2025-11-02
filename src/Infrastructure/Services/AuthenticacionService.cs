@@ -18,10 +18,12 @@ namespace Infrastructure.Services
     {
         private readonly IAdminRepository _adminRepository;
         private readonly IConfiguration _config;
+        private readonly IRecepcionistaRepository _recepcionistaRepository;
 
-        public AuthenticacionService(IAdminRepository adminRepository, IConfiguration config)
+        public AuthenticacionService(IAdminRepository adminRepository, IConfiguration config, IRecepcionistaRepository recepcionistaRepository)
         {
             _adminRepository = adminRepository;
+            _recepcionistaRepository = recepcionistaRepository;
             _config = config;
         }
 
@@ -34,14 +36,39 @@ namespace Infrastructure.Services
             if (admin.Password != password) return null;
             return admin;
         }
+        private Employee? validateRecepcionista(string email, string password)
+        {
+            Employee? recepcionista = _recepcionistaRepository.GetByEmail(email);
+        
+           
+            if (recepcionista is null) return null;
+            if (recepcionista.Password != password) return null;
+            return recepcionista;
+        }
 
         public string Authenticate(LoginDto logindto)
         {
             // validar que el admin exista
             var validatedAdmin = validateAdmin(logindto.Email, logindto.Password);
 
-            if (validatedAdmin is null) throw new Exception("credenciales invalidas");
+            if (validatedAdmin != null)
+            {
+                return Generatetoken(validatedAdmin.Id.ToString(), "Admin");
+            }
 
+            // validar que el recepcionista exista
+            var validatedRecepcionista = validateRecepcionista(logindto.Email, logindto.Password);
+            if (validatedRecepcionista != null)
+            {
+                return Generatetoken(validatedRecepcionista.Id.ToString(), "Recepcionista");
+            }
+
+            throw new UnauthorizedAccessException("Credenciales invalidas");
+        }
+
+
+        public string Generatetoken(string userId, string role) 
+        {
             // generar el token
             var securityPassword = new SymmetricSecurityKey(
                 Encoding.ASCII.GetBytes(_config["Authentication:SecretForKey"]!));
@@ -50,7 +77,8 @@ namespace Infrastructure.Services
                 securityPassword, SecurityAlgorithms.HmacSha256);
 
             var claimsForToken = new List<Claim>();
-            claimsForToken.Add(new Claim("sub", validatedAdmin.Id.ToString()));
+            claimsForToken.Add(new Claim("sub", userId));
+            claimsForToken.Add(new Claim("role", role));
 
             //claimsForToken.Add(new Claim("role", validatedUser.Role.ToString()))
 
@@ -69,7 +97,7 @@ namespace Infrastructure.Services
 
             //var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier || c.Type == "sub")?.Value;
             // esta linea chequearia el ID si quiesiera traermelo en un login por ejemplo 
-        
+
             return tokenToReturn.ToString();
         }
     }
