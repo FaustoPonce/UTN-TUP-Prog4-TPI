@@ -148,7 +148,7 @@ namespace Application.Services
                         var workoutclass = _workoutClassRepository.GetById(ID);
                         if (workoutclass == null)
                         {
-                            throw new ValidationException($"no se encontro una clase con id {ID} en relacion con este miembro");
+                            throw new NotFoundException($"no se encontro una clase con id {ID} en relacion con este miembro");
                         }
                         workoutclasses.Add(workoutclass);
                     }
