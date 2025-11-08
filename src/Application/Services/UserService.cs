@@ -34,6 +34,12 @@ namespace Application.Services
 
         public User Create(CreationUserDto creationUserDto) 
         {
+            if (string.IsNullOrWhiteSpace(creationUserDto.Name) ||
+                string.IsNullOrWhiteSpace(creationUserDto.Email) ||
+                string.IsNullOrWhiteSpace(creationUserDto.Password))
+            {
+                throw new ValidationException("Falta un campo. Todos los campos son obligatorios.");
+            }
             if (!creationUserDto.Email.Contains("@"))
             {
                 throw new ValidationException("El email no es valido. Debe contener un '@'.");
@@ -60,8 +66,17 @@ namespace Application.Services
         }
 
         public void Update(int id, CreationUserDto creationUserDto)
-        {   
-            
+        {
+            if (string.IsNullOrWhiteSpace(creationUserDto.Name) ||
+                string.IsNullOrWhiteSpace(creationUserDto.Email) ||
+                string.IsNullOrWhiteSpace(creationUserDto.Password))
+            {
+                throw new ValidationException("Falta un campo. Todos los campos son obligatorios.");
+            }
+            if (!creationUserDto.Email.Contains("@"))
+            {
+                throw new ValidationException("El email no es valido. Debe contener un '@'.");
+            }
             var userToUpdate = _userRepositoryBase.GetById(id);
             if (userToUpdate == null) 
             {

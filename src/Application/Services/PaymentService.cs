@@ -2,6 +2,7 @@
 using Application.Models;
 using Application.Models.Request;
 using Domain.Entities;
+using Domain.Enums;
 using Domain.Exceptions;
 using Domain.Interfaces;
 using System;
@@ -25,10 +26,20 @@ namespace Application.Services
         }
 
         public Payment Create(CreationPaymentDto creationPaymentDto)
-        {   
+        {
             if (creationPaymentDto.Amount <= 0)
             {
-                throw new ValidationException("El monto del pago debe ser mayor a cero.");
+                throw new ValidationException("El monto del pago debe ser mayor a 0.");
+            }
+
+            if (creationPaymentDto.MemberId <= 0)
+            {
+                throw new ValidationException("Falta el campo 'memberId' o su valor no es valido.");
+            }
+
+            if (!Enum.IsDefined(typeof(PaymentMethod), creationPaymentDto.PaymentMethod))
+            {
+                throw new ValidationException("El campo 'paymentMethod' no es valido. Debe ser 0 (Efectivo) o 1 (Tarjeta).");
             }
             if (_memberRepositoryBase.GetById(creationPaymentDto.MemberId) == null)
             {
@@ -75,6 +86,20 @@ namespace Application.Services
 
         public void Update(int id, CreationPaymentDto creationPaymentDto)
         {
+            if (creationPaymentDto.Amount <= 0)
+            {
+                throw new ValidationException("El monto del pago debe ser mayor a 0.");
+            }
+
+            if (creationPaymentDto.MemberId <= 0)
+            {
+                throw new ValidationException("Falta el campo 'memberId' o su valor no es valido.");
+            }
+
+            if (!Enum.IsDefined(typeof(PaymentMethod), creationPaymentDto.PaymentMethod))
+            {
+                throw new ValidationException("El campo 'paymentMethod' no es valido. Debe ser 0 (Efectivo) o 1 (Tarjeta).");
+            }
             var paymentToUpdate = _paymentRepositoryBase.GetById(id);
             if (paymentToUpdate == null)
             {

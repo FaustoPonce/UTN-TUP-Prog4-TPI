@@ -26,15 +26,25 @@ namespace Application.Services
 
         public WorkoutPlan Create(CreationWorkoutPlanDto creationWorkoutPlanDto)
         {
+            if (string.IsNullOrWhiteSpace(creationWorkoutPlanDto.Name) ||
+                string.IsNullOrWhiteSpace(creationWorkoutPlanDto.Description))
+            {
+                throw new ValidationException("Falta un campo. Los campos 'name' y 'description' son obligatorios.");
+            }
+            if (creationWorkoutPlanDto.Price <= 0)
+            {
+                throw new ValidationException("El precio del plan de entrenamiento no puede ser negativo o 0");
+            }
+            if (creationWorkoutPlanDto.MemberId <= 0)
+            {
+                throw new ValidationException("Falta el campo 'memberId' o su valor no es valido.");
+            }
             var member = _memberRepositoryBase.GetById(creationWorkoutPlanDto.MemberId);
             if (member == null)
             {
                 throw new NotFoundException($"No existe un miembro con id {creationWorkoutPlanDto.MemberId}");
             }
-            if (creationWorkoutPlanDto.Price < 0)
-            {
-                throw new ValidationException("El precio del plan de entrenamiento no puede ser negativo o 0");
-            }
+            
             var newWorkoutPlan = new WorkoutPlan
             {
                 Name = creationWorkoutPlanDto.Name,
@@ -82,6 +92,19 @@ namespace Application.Services
 
         public void Update(int id, CreationWorkoutPlanDto creationWorkoutPlanDto)
         {
+            if (string.IsNullOrWhiteSpace(creationWorkoutPlanDto.Name) ||
+                string.IsNullOrWhiteSpace(creationWorkoutPlanDto.Description))
+            {
+                throw new ValidationException("Falta un campo. Los campos 'name' y 'description' son obligatorios.");
+            }
+            if (creationWorkoutPlanDto.Price <= 0)
+            {
+                throw new ValidationException("El precio del plan de entrenamiento no puede ser negativo o 0");
+            }
+            if (creationWorkoutPlanDto.MemberId <= 0)
+            {
+                throw new ValidationException("Falta el campo 'memberId' o su valor no es valido.");
+            }
             var workoutPlanToUpdate = _workoutPlanRepositoryBase.GetById(id);
             if (workoutPlanToUpdate == null) {
                 throw new NotFoundException($"No existe un plan de entrenamiento con id {id}");

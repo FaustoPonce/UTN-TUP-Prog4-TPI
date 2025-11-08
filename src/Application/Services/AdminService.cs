@@ -20,7 +20,13 @@ namespace Application.Services
             _adminRepositoryBase = adminRepository;
         }
         public Admin Create(CreationAdminDto creationAdminDto)
-        {
+        {   
+            if (string.IsNullOrWhiteSpace(creationAdminDto.Name) || 
+                string.IsNullOrWhiteSpace(creationAdminDto.Email) || 
+                string.IsNullOrWhiteSpace(creationAdminDto.Password))
+            {
+                throw new ValidationException("Falta un Campo, todos son obligatorios");
+            }
             if (!creationAdminDto.Email.Contains("@"))
             {
                 throw new ValidationException("El email no es valido. Debe contener un '@'.");
@@ -70,6 +76,12 @@ namespace Application.Services
 
         public void Update(int id, CreationAdminDto creationAdminDto)
         {
+            if (string.IsNullOrWhiteSpace(creationAdminDto.Name) ||
+                string.IsNullOrWhiteSpace(creationAdminDto.Email) ||
+                string.IsNullOrWhiteSpace(creationAdminDto.Password))
+            {
+                throw new ValidationException("Falta un Campo, todos son obligatorios");
+            }
             var adminToUpdate = _adminRepositoryBase.GetById(id);
             if (adminToUpdate == null)
             {

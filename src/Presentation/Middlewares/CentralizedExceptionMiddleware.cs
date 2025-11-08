@@ -35,6 +35,10 @@ namespace Presentation.Middlewares
                         _logger.LogWarning(validationEx, "Validation Exception");
                         context.Response.StatusCode = StatusCodes.Status400BadRequest;
                         break;
+                    case UnauthorizedAccessException unauthorizedEx:
+                        _logger.LogWarning(unauthorizedEx, "Unauthorized Exception");
+                        context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                        break;
                     default:
                         _logger.LogError(ex, "Undhandled Exception");
                         context.Response.StatusCode = StatusCodes.Status500InternalServerError;

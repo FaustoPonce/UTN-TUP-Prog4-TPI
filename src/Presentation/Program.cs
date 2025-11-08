@@ -73,6 +73,8 @@ builder.Services.AddAuthentication("Bearer").AddJwtBearer(options =>
             ValidAudience = builder.Configuration["Authentication:Audience"],
             IssuerSigningKey = new SymmetricSecurityKey(
                 Encoding.ASCII.GetBytes(builder.Configuration["Authentication:SecretForKey"]!))
+            RoleClaimType = "role",
+            NameClaimType = "sub"
         };
     }
 );

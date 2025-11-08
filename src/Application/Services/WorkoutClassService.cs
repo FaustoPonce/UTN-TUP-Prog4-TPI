@@ -29,6 +29,36 @@ namespace Application.Services
 
         public WorkoutClass Create(CreationWorkoutClassDto creationWorkoutClassDto)
         {
+            if (string.IsNullOrWhiteSpace(creationWorkoutClassDto.Name) ||
+                string.IsNullOrWhiteSpace(creationWorkoutClassDto.Description))
+            {
+                throw new ValidationException("Falta un campo. Los campos 'name' y 'description' son obligatorios.");
+            }
+            if (creationWorkoutClassDto.Schedule == null)
+            {
+                throw new ValidationException("Falta el campo 'schedule'.");
+
+            }
+            if (creationWorkoutClassDto.Schedule.ClassDays < 0 || creationWorkoutClassDto.Schedule.ClassDays > 6)
+            {
+                throw new ValidationException("El campo 'classDays' no es valido. Debe estar entre 0 (Lunes) y 6 (Domingo).");
+            }
+            if (creationWorkoutClassDto.Schedule.StartTime <= 0 || creationWorkoutClassDto.Schedule.EndTime <= 0)
+            {
+                throw new ValidationException("Los campos 'startTime' y 'endTime' deben ser mayores a 0.");
+            }
+            if (creationWorkoutClassDto.Schedule.StartTime >= creationWorkoutClassDto.Schedule.EndTime)
+            {
+                throw new ValidationException("El horario de inicio debe ser anterior al horario de finalizacion.");
+            }
+            if (creationWorkoutClassDto.EmployeeId <= 0)
+            {
+                throw new ValidationException("Falta el campo 'employeeId' o su valor no es valido.");
+            }
+            if (creationWorkoutClassDto.IdMembers != null && creationWorkoutClassDto.IdMembers.Any(id => id <= 0))
+            {
+                throw new ValidationException("La lista 'idMembers' contiene un valor invalido (los IDs tienen ser mayores a 0).");
+            }
             if (_employeeRepositoryBase.GetById(creationWorkoutClassDto.EmployeeId) == null)
             {
                 throw new ValidationException($"No se encontro un empleado con id {creationWorkoutClassDto.EmployeeId} para asociar la clase.");
@@ -93,6 +123,40 @@ namespace Application.Services
 
         public void Update(int id, CreationWorkoutClassDto creationWorkoutClassDto)
         {
+            if (string.IsNullOrWhiteSpace(creationWorkoutClassDto.Name) ||
+                string.IsNullOrWhiteSpace(creationWorkoutClassDto.Description))
+            {
+                throw new ValidationException("Falta un campo. Los campos 'name' y 'description' son obligatorios.");
+            }
+            if (creationWorkoutClassDto.Schedule == null)
+            {
+                throw new ValidationException("Falta el campo 'schedule'.");
+
+            }
+            if (creationWorkoutClassDto.Schedule.ClassDays < 0 || creationWorkoutClassDto.Schedule.ClassDays > 6)
+            {
+                throw new ValidationException("El campo 'classDays' no es valido. Debe estar entre 0 (Lunes) y 6 (Domingo).");
+            }
+            if (creationWorkoutClassDto.Schedule.StartTime <= 0 || creationWorkoutClassDto.Schedule.EndTime <= 0)
+            {
+                throw new ValidationException("Los campos 'startTime' y 'endTime' deben ser mayores a 0.");
+            }
+            if (creationWorkoutClassDto.Schedule.StartTime >= creationWorkoutClassDto.Schedule.EndTime)
+            {
+                throw new ValidationException("El horario de inicio debe ser anterior al horario de finalizacion.");
+            }
+            if (creationWorkoutClassDto.EmployeeId <= 0)
+            {
+                throw new ValidationException("Falta el campo 'employeeId' o su valor no es valido.");
+            }
+            if (creationWorkoutClassDto.IdMembers != null && creationWorkoutClassDto.IdMembers.Any(id => id <= 0))
+            {
+                throw new ValidationException("La lista 'idMembers' contiene un valor invalido (los IDs tienen ser mayores a 0).");
+            }
+            if (_employeeRepositoryBase.GetById(creationWorkoutClassDto.EmployeeId) == null)
+            {
+                throw new ValidationException($"No se encontro un empleado con id {creationWorkoutClassDto.EmployeeId} para asociar la clase.");
+            }
             var workoutClassToUpdate = _workoutClassRepositoryBase.GetById(id);
             
             if (workoutClassToUpdate != null)
@@ -103,6 +167,28 @@ namespace Application.Services
             workoutClassToUpdate.Description = creationWorkoutClassDto.Description;
             workoutClassToUpdate.Schedule = creationWorkoutClassDto.Schedule;
             workoutClassToUpdate.EmployeeId = creationWorkoutClassDto.EmployeeId;
+
+            if (creationWorkoutClassDto.IdMembers != null) 
+            {
+                var IDs = creationWorkoutClassDto.IdMembers.Distinct().ToList();
+                var members = new List<Member>();
+
+                if (IDs.Any()) 
+                {
+                    foreach (var memberID in IDs) 
+                    {
+                        var member = _memberRepository.GetById(memberID);
+                        if (member == null) 
+                        {
+                            throw new NotFoundException($"No se encontro un miembro con id {memberID} en relacion con esta clase");
+                        }
+                        members.Add(member);
+                    }
+                }
+                workoutClassToUpdate.Members = members;
+            }
+
+
             _workoutClassRepositoryBase.Update(workoutClassToUpdate);
         }
     }

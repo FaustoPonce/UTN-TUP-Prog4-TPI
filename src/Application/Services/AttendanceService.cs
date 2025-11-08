@@ -27,6 +27,19 @@ namespace Application.Services
 
         public Attendance Create(CreationAttendanceDto creationAttendaceDto)
         {
+            if (creationAttendaceDto.Date == default(DateTime))
+            {
+                throw new ValidationException("Falta el campo 'date' o su valor no es valido.");
+            }
+            if (creationAttendaceDto.MemberId <= 0)
+            {
+                throw new ValidationException("Falta el campo 'memberId' o su valor no es valido.");
+
+            }
+            if (creationAttendaceDto.EmployeeId <= 0)
+            {
+                throw new ValidationException("Falta el campo 'employeeId' o su valor no es valido.");
+            }
             var newAttendance = new Attendance();
             
             if (creationAttendaceDto.MemberId == 0)
@@ -93,14 +106,63 @@ namespace Application.Services
 
         public void Update(int id, CreationAttendanceDto creationAttendaceDto)
         {
+            if (creationAttendaceDto.Date == default(DateTime))
+            {
+                throw new ValidationException("Falta el campo 'date' o su valor no es valido.");
+            }
+            if (creationAttendaceDto.MemberId <= 0)
+            {
+                throw new ValidationException("Falta el campo 'memberId' o su valor no es valido.");
+
+            }
+            if (creationAttendaceDto.EmployeeId <= 0)
+            {
+                throw new ValidationException("Falta el campo 'employeeId' o su valor no es valido.");
+            }
             var attendanceToUpdate = _attendanceRepositoryBase.GetById(id);
             if (attendanceToUpdate == null)
             {
                 throw new NotFoundException($"No existe una asistencia con id {id}");
             }
-            attendanceToUpdate.MemberId = creationAttendaceDto.MemberId;
+            if (creationAttendaceDto.MemberId != null)
+            {
+                if (creationAttendaceDto.MemberId <= 0)
+                {
+                    throw new ValidationException("El campo 'memberId' no es valido (debe ser mayor a 0).");
+                }
+
+                var member = _memberRepositoryBase.GetById(creationAttendaceDto.MemberId.Value);
+                if (member == null)
+                {
+                    throw new NotFoundException($"No se encontro un miembro con id {creationAttendaceDto.MemberId}");
+                }
+
+                attendanceToUpdate.MemberId = creationAttendaceDto.MemberId;
+                attendanceToUpdate.Member = member;
+                // si la asisst es de miembro employee en nulo
+                attendanceToUpdate.EmployeeId = null;
+                attendanceToUpdate.Employee = null;
+            }
+            if (creationAttendaceDto.EmployeeId != null)
+            {
+                if (creationAttendaceDto.EmployeeId <= 0)
+                {
+                    throw new ValidationException("El campo 'employeeId' no es valido (debe ser mayor a 0).");
+                }
+
+                var employee = _employeeRepositoryBase.GetById(creationAttendaceDto.EmployeeId.Value);
+                if (employee == null)
+                {
+                    throw new NotFoundException($"No se encontro un empleado con id {creationAttendaceDto.EmployeeId}");
+                }
+
+                attendanceToUpdate.EmployeeId = creationAttendaceDto.EmployeeId;
+                attendanceToUpdate.Employee = employee;
+                // lo mismo al revez
+                attendanceToUpdate.MemberId = null;
+                attendanceToUpdate.Member = null;
+            }
             attendanceToUpdate.Date = creationAttendaceDto.Date;
-            attendanceToUpdate.EmployeeId = creationAttendaceDto.EmployeeId;
             _attendanceRepositoryBase.Update(attendanceToUpdate);
         }
     }
