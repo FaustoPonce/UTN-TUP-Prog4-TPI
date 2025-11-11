@@ -9,20 +9,20 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Data
 {
-    public class WorkoutClassRepository : IWorkoutClassRepository
+    public class WorkoutClassRepository : RepositoryBase<WorkoutClass>, IWorkoutClassRepository
     {
         private readonly ApplicationDbContext _context;
-        public WorkoutClassRepository(ApplicationDbContext context)
+        public WorkoutClassRepository(ApplicationDbContext context) : base(context)
         {
             _context = context;
         }
 
-        public List<WorkoutClass> GetAll()
+        public override List<WorkoutClass> GetAll()
         {
             return _context.WorkoutClasses.Include(wc => wc.Employee).Include(wc => wc.Members).ToList();
         }
 
-        public WorkoutClass GetById(int id)
+        public override WorkoutClass GetById(int id)
         {
             return _context.WorkoutClasses.Include(wc => wc.Employee).Include(wc => wc.Members).FirstOrDefault(wc => wc.Id == id);
         }

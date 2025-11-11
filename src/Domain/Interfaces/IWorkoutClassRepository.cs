@@ -7,9 +7,8 @@ using System.Threading.Tasks;
 
 namespace Domain.Interfaces
 {
-    public interface IWorkoutClassRepository
+    public interface IWorkoutClassRepository : IRepositoryBase<WorkoutClass>
     {
-        List<WorkoutClass> GetAll();
-        WorkoutClass GetById(int id);
+        
     }
 }

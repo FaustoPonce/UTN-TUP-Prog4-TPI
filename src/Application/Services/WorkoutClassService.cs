@@ -14,17 +14,15 @@ namespace Application.Services
 {
     public class WorkoutClassService : IWorkoutClassService
     {
-        private readonly IRepositoryBase<WorkoutClass> _workoutClassRepositoryBase;
         private readonly IWorkoutClassRepository _workoutClassRepository;
         private readonly IMemberRepository _memberRepository;
-        private readonly IRepositoryBase<Employee> _employeeRepositoryBase;
+        private readonly IEmployeeRepository _employeeRepository;
 
-        public WorkoutClassService(IRepositoryBase<WorkoutClass> workoutClassRepositoryBase, IWorkoutClassRepository workoutClassRepository, IMemberRepository memberRepository, IRepositoryBase<Employee> memberRepositoryBase)
+        public WorkoutClassService(IWorkoutClassRepository workoutClassRepository, IMemberRepository memberRepository, IEmployeeRepository employeeRepository)
         {
-            _workoutClassRepositoryBase = workoutClassRepositoryBase;
             _workoutClassRepository = workoutClassRepository;
             _memberRepository = memberRepository;
-            _employeeRepositoryBase = memberRepositoryBase;
+            _employeeRepository = employeeRepository;
         }
 
         public WorkoutClass Create(CreationWorkoutClassDto creationWorkoutClassDto)
@@ -59,7 +57,7 @@ namespace Application.Services
             {
                 throw new ValidationException("La lista 'idMembers' contiene un valor invalido (los IDs tienen ser mayores a 0).");
             }
-            if (_employeeRepositoryBase.GetById(creationWorkoutClassDto.EmployeeId) == null)
+            if (_employeeRepository.GetById(creationWorkoutClassDto.EmployeeId) == null)
             {
                 throw new ValidationException($"No se encontro un empleado con id {creationWorkoutClassDto.EmployeeId} para asociar la clase.");
             }
@@ -85,17 +83,17 @@ namespace Application.Services
                 }
                 newWorkoutClass.Members = members;
             }
-            return _workoutClassRepositoryBase.create(newWorkoutClass);
+            return _workoutClassRepository.create(newWorkoutClass);
         }
 
         public void Delete(int id)
         {
-            var WorkoutClassToDelete = _workoutClassRepositoryBase.GetById(id);
+            var WorkoutClassToDelete = _workoutClassRepository.GetById(id);
             if (WorkoutClassToDelete == null)
             {
                 throw new NotFoundException($"No existe una clase con id {id}");
             }
-            _workoutClassRepositoryBase.Delete(WorkoutClassToDelete);
+            _workoutClassRepository.Delete(WorkoutClassToDelete);
         }
 
         public List<WorkoutClassDto> GetAllWorkoutClass()
@@ -153,11 +151,11 @@ namespace Application.Services
             {
                 throw new ValidationException("La lista 'idMembers' contiene un valor invalido (los IDs tienen ser mayores a 0).");
             }
-            if (_employeeRepositoryBase.GetById(creationWorkoutClassDto.EmployeeId) == null)
+            if (_employeeRepository.GetById(creationWorkoutClassDto.EmployeeId) == null)
             {
                 throw new ValidationException($"No se encontro un empleado con id {creationWorkoutClassDto.EmployeeId} para asociar la clase.");
             }
-            var workoutClassToUpdate = _workoutClassRepositoryBase.GetById(id);
+            var workoutClassToUpdate = _workoutClassRepository.GetById(id);
             
             if (workoutClassToUpdate == null)
             {
@@ -189,7 +187,7 @@ namespace Application.Services
             }
 
 
-            _workoutClassRepositoryBase.Update(workoutClassToUpdate);
+            _workoutClassRepository.Update(workoutClassToUpdate);
         }
     }
 }
