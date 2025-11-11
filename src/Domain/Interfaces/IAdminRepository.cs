@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Domain.Interfaces
 {
-    public interface IAdminRepository
+    public interface IAdminRepository : IRepositoryBase<Admin>
     {
         Admin GetByEmail(string name);
     }

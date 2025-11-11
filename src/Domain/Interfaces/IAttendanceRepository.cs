@@ -7,9 +7,7 @@ using System.Threading.Tasks;
 
 namespace Domain.Interfaces
 {
-    public interface IAttendanceRepository
+    public interface IAttendanceRepository : IRepositoryBase<Attendance>
     {
-        List<Attendance> GetAll();
-        Attendance GetById(int id);
     }
 }

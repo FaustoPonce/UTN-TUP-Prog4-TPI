@@ -14,16 +14,16 @@ namespace Application.Services
 {
     public class UserService : IUserService
     {
-        private readonly IRepositoryBase<User> _userRepositoryBase;
+        private readonly IUserRepository _userRepository;
 
-        public UserService(IRepositoryBase<User> userRepositoryBase)
+        public UserService(IUserRepository userRepository)
         {
-            _userRepositoryBase = userRepositoryBase;
+            _userRepository = userRepository;
         }
 
         public List<UserDto> GetAllUsers()
         {
-            List<User> users = _userRepositoryBase.GetAll();
+            List<User> users = _userRepository.GetAll();
             if (users == null || users.Count == 0)
             {
                 throw new NotFoundException("No hay usuarios todavia");
@@ -51,12 +51,12 @@ namespace Application.Services
                 Password = creationUserDto.Password,
             };
 
-            return _userRepositoryBase.create(newUser);
+            return _userRepository.create(newUser);
         }
 
         public UserDto GetById(int id)
         {
-            var user = _userRepositoryBase.GetById(id);
+            var user = _userRepository.GetById(id);
             if (user == null)
             {
                 throw new NotFoundException($"No hay un usuario con id {id}");
@@ -77,7 +77,7 @@ namespace Application.Services
             {
                 throw new ValidationException("El email no es valido. Debe contener un '@'.");
             }
-            var userToUpdate = _userRepositoryBase.GetById(id);
+            var userToUpdate = _userRepository.GetById(id);
             if (userToUpdate == null) 
             {
                 throw new NotFoundException($"No hay un usuario con id {id}");
@@ -88,18 +88,18 @@ namespace Application.Services
                 userToUpdate.Email = creationUserDto.Email;
                 userToUpdate.Password = creationUserDto.Password;
                 userToUpdate.LastUpdate = DateTime.Now;
-                _userRepositoryBase.Update(userToUpdate);
+                _userRepository.Update(userToUpdate);
             }
         }
 
         public void Delete(int id)
         {
-            var userToDelete = _userRepositoryBase.GetById(id);
+            var userToDelete = _userRepository.GetById(id);
             if (userToDelete == null)
             {
                 throw new NotFoundException($"No hay un usuario con id {id}");
             }
-            _userRepositoryBase.Delete(userToDelete);
+            _userRepository.Delete(userToDelete);
         }
     }
 }

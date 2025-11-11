@@ -9,19 +9,19 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Data
 {
-    public class MemberRepository : IMemberRepository
+    public class MemberRepository : RepositoryBase<Member>, IMemberRepository
     {
         private readonly ApplicationDbContext _context;
-        public MemberRepository(ApplicationDbContext context)
+        public MemberRepository(ApplicationDbContext context) : base(context)
         {
             _context = context;
         }
-        public List<Member> GetAll()
+        public override List<Member> GetAll()
         {
             return _context.Members.Include(m => m.WorkoutClasses).ThenInclude(wc => wc.Employee).ToList();       
         }
 
-        public Member GetById(int id)
+        public override Member GetById(int id)
         {
             return _context.Members.Include(m => m.WorkoutClasses).ThenInclude(wc => wc.Employee).FirstOrDefault(m => m.Id == id); ;
         }

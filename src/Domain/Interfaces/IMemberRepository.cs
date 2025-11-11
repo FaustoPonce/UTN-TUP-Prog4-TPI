@@ -7,9 +7,7 @@ using System.Threading.Tasks;
 
 namespace Domain.Interfaces
 {
-    public interface IMemberRepository
+    public interface IMemberRepository : IRepositoryBase<Member>
     {
-        List<Member> GetAll();
-        Member GetById(int id);
     }
 }

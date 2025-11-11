@@ -8,16 +8,12 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Data
 {
-    public class AdminRepository : RepositoryBase<Admin>, IAdminRepository
+    public class EmployeeRepository : RepositoryBase<Employee>, IEmployeeRepository
     {
         private readonly ApplicationDbContext _context;
-        public AdminRepository(ApplicationDbContext context) : base(context)
+        public EmployeeRepository(ApplicationDbContext context) : base(context)
         {
             _context = context;
-        }
-        public Admin GetByEmail(string email)
-        {
-           return _context.Admins.FirstOrDefault(a => a.Email == email);
         }
     }
 }

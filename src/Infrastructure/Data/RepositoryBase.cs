@@ -29,12 +29,12 @@ namespace Infrastructure.Data
             _context.SaveChanges();
         }
 
-        public List<T> GetAll()
+        public virtual List<T> GetAll()
         {
             return _context.Set<T>().ToList();
         }
 
-        public T? GetById(int id)
+        public virtual T? GetById(int id)
         {
             return _context.Set<T>().Find(new object[] { id });
         }

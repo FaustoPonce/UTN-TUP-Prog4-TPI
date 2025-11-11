@@ -7,9 +7,7 @@ using System.Threading.Tasks;
 
 namespace Domain.Interfaces
 {
-    public interface IWorkoutPlanRepository
+    public interface IWorkoutPlanRepository : IRepositoryBase<WorkoutPlan>
     {
-        List<WorkoutPlan> GetAll();
-        WorkoutPlan GetById(int id);
     }
 }

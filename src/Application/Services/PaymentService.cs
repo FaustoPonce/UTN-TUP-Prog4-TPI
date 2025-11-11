@@ -15,14 +15,12 @@ namespace Application.Services
 {
     public class PaymentService : IPaymentService
     {
-        private readonly IRepositoryBase<Payment> _paymentRepositoryBase;
         private readonly IPaymentRepository _paymentRepository;
-        private readonly IRepositoryBase<Member> _memberRepositoryBase;
-        public PaymentService(IRepositoryBase<Payment> paymentRepositoryBase, IPaymentRepository paymentRepository, IRepositoryBase<Member> memberRepositoryBase)
+        private readonly IMemberRepository _memberRepository;
+        public PaymentService(IPaymentRepository paymentRepository, IMemberRepository memberRepository)
         {
-            _paymentRepositoryBase = paymentRepositoryBase;
             _paymentRepository = paymentRepository;
-            _memberRepositoryBase = memberRepositoryBase;
+            _memberRepository = memberRepository;
         }
 
         public Payment Create(CreationPaymentDto creationPaymentDto)
@@ -41,7 +39,7 @@ namespace Application.Services
             {
                 throw new ValidationException("El campo 'paymentMethod' no es valido. Debe ser 0 (Efectivo) o 1 (Tarjeta).");
             }
-            if (_memberRepositoryBase.GetById(creationPaymentDto.MemberId) == null)
+            if (_memberRepository.GetById(creationPaymentDto.MemberId) == null)
             {
                 throw new NotFoundException($"No se encontro un miembro con id {creationPaymentDto.MemberId} para asociar el pago.");
             }
@@ -50,17 +48,17 @@ namespace Application.Services
                 Amount = creationPaymentDto.Amount,
                 MemberId = creationPaymentDto.MemberId
             };
-            return _paymentRepositoryBase.create(newPayment);
+            return _paymentRepository.create(newPayment);
         }
 
         public void Delete(int id)
         {
-            var paymentToDelete = _paymentRepositoryBase.GetById(id);
+            var paymentToDelete = _paymentRepository.GetById(id);
             if (paymentToDelete == null)
             {
                 throw new NotFoundException($"No existe un pago con id {id}");
             }
-            _paymentRepositoryBase.Delete(paymentToDelete);
+            _paymentRepository.Delete(paymentToDelete);
         }
 
         public List<PaymentDto> GetAllPayments()
@@ -100,7 +98,7 @@ namespace Application.Services
             {
                 throw new ValidationException("El campo 'paymentMethod' no es valido. Debe ser 0 (Efectivo) o 1 (Tarjeta).");
             }
-            var paymentToUpdate = _paymentRepositoryBase.GetById(id);
+            var paymentToUpdate = _paymentRepository.GetById(id);
             if (paymentToUpdate == null)
             {
                 throw new NotFoundException($"No existe un pago con id {id}");
@@ -109,7 +107,7 @@ namespace Application.Services
             paymentToUpdate.Date = DateTime.Now;
             paymentToUpdate.PaymentMethod = creationPaymentDto.PaymentMethod;
             paymentToUpdate.MemberId = creationPaymentDto.MemberId;
-            _paymentRepositoryBase.Update(paymentToUpdate);
+            _paymentRepository.Update(paymentToUpdate);
         }
     }
 }

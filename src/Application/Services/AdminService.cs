@@ -14,10 +14,10 @@ namespace Application.Services
 {
     public class AdminService : IAdminService
     {
-        private readonly IRepositoryBase<Admin> _adminRepositoryBase;
-        public AdminService(IRepositoryBase<Admin> adminRepository)
+        private readonly IAdminRepository _adminRepository;
+        public AdminService(IAdminRepository adminRepository)
         {
-            _adminRepositoryBase = adminRepository;
+            _adminRepository = adminRepository;
         }
         public Admin Create(CreationAdminDto creationAdminDto)
         {   
@@ -38,24 +38,24 @@ namespace Application.Services
                 Password = creationAdminDto.Password
                
             };
-            return _adminRepositoryBase.create(newAdmin);
+            return _adminRepository.create(newAdmin);
         }
 
         public void Delete(int id)
         {
             
-            var adminToDelete = _adminRepositoryBase.GetById(id);
+            var adminToDelete = _adminRepository.GetById(id);
             if (adminToDelete == null)
             {
                 throw new NotFoundException($"No existe un admin con id {id}");
             }
-            _adminRepositoryBase.Delete(adminToDelete);
+            _adminRepository.Delete(adminToDelete);
         }
 
         public List<AdminDto> GetAllAdmins()
         {
             
-            var admins = _adminRepositoryBase.GetAll();
+            var admins = _adminRepository.GetAll();
             if (admins == null || admins.Count == 0)
             {
                 throw new NotFoundException("No hay admins");
@@ -66,7 +66,7 @@ namespace Application.Services
 
         public AdminDto GetById(int id)
         {
-            var admin = _adminRepositoryBase.GetById(id);
+            var admin = _adminRepository.GetById(id);
             if (admin == null)
             {
                 throw new NotFoundException($"No existe un admin con id {id}");
@@ -82,7 +82,7 @@ namespace Application.Services
             {
                 throw new ValidationException("Falta un Campo, todos son obligatorios");
             }
-            var adminToUpdate = _adminRepositoryBase.GetById(id);
+            var adminToUpdate = _adminRepository.GetById(id);
             if (adminToUpdate == null)
             {
                 throw new NotFoundException($"No existe un admin con id {id}");
@@ -91,7 +91,7 @@ namespace Application.Services
             adminToUpdate.Email = creationAdminDto.Email;
             adminToUpdate.Password = creationAdminDto.Password;
             adminToUpdate.LastUpdate = DateTime.Now;
-            _adminRepositoryBase.Update(adminToUpdate);
+            _adminRepository.Update(adminToUpdate);
         }
     }
 }

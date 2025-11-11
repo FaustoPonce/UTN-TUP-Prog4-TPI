@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Domain.Interfaces
 {
-    public interface IPaymentRepository : IRepositoryBase<Payment>
-    { 
+    public interface IUserRepository : IRepositoryBase<User>
+    {
     }
 }

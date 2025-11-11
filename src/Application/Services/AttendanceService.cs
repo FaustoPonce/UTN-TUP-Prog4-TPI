@@ -14,16 +14,14 @@ namespace Application.Services
 {
     public class AttendanceService : IAttendanceService
     {
-        private readonly IRepositoryBase<Attendance> _attendanceRepositoryBase;
-        private readonly IRepositoryBase<Member> _memberRepositoryBase;
-        private readonly IRepositoryBase<Employee> _employeeRepositoryBase;
+        private readonly IMemberRepository _memberRepository;
+        private readonly IEmployeeRepository _employeeRepository;
         private readonly IAttendanceRepository _attendanceRepository;
-        public AttendanceService(IRepositoryBase<Attendance> attendanceRepositoryBase, IRepositoryBase<Employee> employeeRepositoryBase, IAttendanceRepository attendanceRepository, IRepositoryBase<Member> memberRepository)
+        public AttendanceService( IEmployeeRepository employeeRepository, IAttendanceRepository attendanceRepository, IMemberRepository memberRepository)
         {
-            _attendanceRepositoryBase = attendanceRepositoryBase;
-            _employeeRepositoryBase = employeeRepositoryBase;
+            _employeeRepository = employeeRepository;
             _attendanceRepository = attendanceRepository;
-            _memberRepositoryBase = memberRepository;
+            _memberRepository = memberRepository;
 
         }
 
@@ -50,7 +48,7 @@ namespace Application.Services
             
             if (creationAttendaceDto.MemberId == 0)
             {
-                var employee = _employeeRepositoryBase.GetById(creationAttendaceDto.EmployeeId.Value);
+                var employee = _employeeRepository.GetById(creationAttendaceDto.EmployeeId.Value);
                 if (employee == null)
                 {
                     throw new NotFoundException($"No se encontro un empleado con id {creationAttendaceDto.EmployeeId}");
@@ -62,7 +60,7 @@ namespace Application.Services
             }
             if (creationAttendaceDto.EmployeeId == 0)
             {
-                var member = _memberRepositoryBase.GetById(creationAttendaceDto.MemberId.Value);
+                var member = _memberRepository.GetById(creationAttendaceDto.MemberId.Value);
                 if (member == null)
                 {
                     throw new NotFoundException($"No se encontro un miembro con id {creationAttendaceDto.MemberId}");
@@ -73,18 +71,18 @@ namespace Application.Services
                 newAttendance.Member = member;
 
             }
-            return _attendanceRepositoryBase.create(newAttendance);
+            return _attendanceRepository.create(newAttendance);
 
         }
 
         public void Delete(int id)
         {
-            var attendanceToDelete = _attendanceRepositoryBase.GetById(id);
+            var attendanceToDelete = _attendanceRepository.GetById(id);
             if (attendanceToDelete == null)
             {
                 throw new NotFoundException($"No existe una asistencia con id {id}");
             }
-            _attendanceRepositoryBase.Delete(attendanceToDelete);
+            _attendanceRepository.Delete(attendanceToDelete);
         }
 
         public List<AttendanceDto> GetAllAttendaces()
@@ -132,14 +130,14 @@ namespace Application.Services
             {
                 throw new ValidationException("Solo debe proporcionar memberId o employeeId, no ambos.");
             }
-            var attendanceToUpdate = _attendanceRepositoryBase.GetById(id);
+            var attendanceToUpdate = _attendanceRepository.GetById(id);
             if (attendanceToUpdate == null)
             {
                 throw new NotFoundException($"No existe una asistencia con id {id}");
             }
             if (hayMember)
             {
-                var member = _memberRepositoryBase.GetById(memberId.Value);
+                var member = _memberRepository.GetById(memberId.Value);
                 if (member == null)
                 {
                     throw new NotFoundException($"No se encontro un miembro con id {memberId}");
@@ -152,7 +150,7 @@ namespace Application.Services
             }
             else // hayEmployee
             {
-                var employee = _employeeRepositoryBase.GetById(employeeId.Value);
+                var employee = _employeeRepository.GetById(employeeId.Value);
                 if (employee == null)
                 {
                     throw new NotFoundException($"No se encontro un empleado con id {employeeId}");
@@ -164,7 +162,7 @@ namespace Application.Services
                 attendanceToUpdate.Member = null;
             }
             attendanceToUpdate.Date = creationAttendaceDto.Date;
-            _attendanceRepositoryBase.Update(attendanceToUpdate);
+            _attendanceRepository.Update(attendanceToUpdate);
         }
     }
 }

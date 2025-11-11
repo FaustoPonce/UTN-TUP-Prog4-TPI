@@ -15,13 +15,12 @@ namespace Application.Services
 {
     public class MemberService : IMemberService
     {
-        private readonly IRepositoryBase<Member> _memberRepositoryBase;
         private readonly IMemberRepository _memberRepository;
         private readonly IWorkoutClassRepository _workoutClassRepository;
 
-        public MemberService(IRepositoryBase<Member> memberRepositoryBase, IMemberRepository memberRepository, IWorkoutClassRepository workoutClassRepository)
+        public MemberService(IMemberRepository memberRepository, IWorkoutClassRepository workoutClassRepository)
         {
-            _memberRepositoryBase = memberRepositoryBase;
+            
             _memberRepository = memberRepository;
             _workoutClassRepository = workoutClassRepository;
         }
@@ -69,17 +68,17 @@ namespace Application.Services
                     }
                     newMember.WorkoutClasses = workoutClasses;
                 }
-            return _memberRepositoryBase.create(newMember);
+            return _memberRepository.create(newMember);
         }
 
         public void Delete(int id)
         {
-            var memberToDelete = _memberRepositoryBase.GetById(id);
+            var memberToDelete = _memberRepository.GetById(id);
             if (memberToDelete == null)
             {
                 throw new NotFoundException($"No existe un miembro con id {id}");
             }
-            _memberRepositoryBase.Delete(memberToDelete);
+            _memberRepository.Delete(memberToDelete);
         }
 
         public List<MemberDto> GetAllMembers()
@@ -124,7 +123,7 @@ namespace Application.Services
             {
                 throw new ValidationException("La lista 'workoutClassesID' tiene un valor invalido (los IDs deben ser mayores a 0).");
             }
-            var memberToUpdate = _memberRepositoryBase.GetById(id);
+            var memberToUpdate = _memberRepository.GetById(id);
             if (memberToUpdate == null)
             {
                 throw new NotFoundException($"No existe un miembro con id {id}");
@@ -156,7 +155,7 @@ namespace Application.Services
                 memberToUpdate.WorkoutClasses = workoutclasses;
             }
 
-            _memberRepositoryBase.Update(memberToUpdate);
+            _memberRepository.Update(memberToUpdate);
         }
     }
 }

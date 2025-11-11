@@ -14,14 +14,13 @@ namespace Application.Services
 {
     public class WorkoutPlanService : IWorkoutPlanService
     {
-        private readonly IRepositoryBase<WorkoutPlan> _workoutPlanRepositoryBase;
-        private readonly IRepositoryBase<Member> _memberRepositoryBase;
+        private readonly IMemberRepository _memberRepository;
         private readonly IWorkoutPlanRepository _workoutPlanRepository;
-        public WorkoutPlanService(IRepositoryBase<WorkoutPlan> workoutPlanRepositoryBase, IRepositoryBase<Member> memberRepositoryBase, IWorkoutPlanRepository workoutPlanRepository)
+        public WorkoutPlanService( IMemberRepository memberRepository, IWorkoutPlanRepository workoutPlanRepository)
         {
-            _workoutPlanRepositoryBase = workoutPlanRepositoryBase;
-            _memberRepositoryBase = memberRepositoryBase;
             _workoutPlanRepository = workoutPlanRepository;
+            _memberRepository = memberRepository;
+            
         }
 
         public WorkoutPlan Create(CreationWorkoutPlanDto creationWorkoutPlanDto)
@@ -39,7 +38,7 @@ namespace Application.Services
             {
                 throw new ValidationException("Falta el campo 'memberId' o su valor no es valido.");
             }
-            var member = _memberRepositoryBase.GetById(creationWorkoutPlanDto.MemberId);
+            var member = _memberRepository.GetById(creationWorkoutPlanDto.MemberId);
             if (member == null)
             {
                 throw new NotFoundException($"No existe un miembro con id {creationWorkoutPlanDto.MemberId}");
@@ -53,17 +52,17 @@ namespace Application.Services
                 MemberId = creationWorkoutPlanDto.MemberId,
                 Member = member
             };
-            return _workoutPlanRepositoryBase.create(newWorkoutPlan);
+            return _workoutPlanRepository.create(newWorkoutPlan);
         }
 
         public void Delete(int id)
         {   
-            var workoutPlanToDelete = _workoutPlanRepositoryBase.GetById(id);
+            var workoutPlanToDelete = _workoutPlanRepository.GetById(id);
             if (workoutPlanToDelete == null)
             {
                 throw new NotFoundException($"No existe un plan de entrenamiento con id {id}");
             }
-            _workoutPlanRepositoryBase.Delete(workoutPlanToDelete);
+            _workoutPlanRepository.Delete(workoutPlanToDelete);
 
         }
 
@@ -105,11 +104,11 @@ namespace Application.Services
             {
                 throw new ValidationException("Falta el campo 'memberId' o su valor no es valido.");
             }
-            var workoutPlanToUpdate = _workoutPlanRepositoryBase.GetById(id);
+            var workoutPlanToUpdate = _workoutPlanRepository.GetById(id);
             if (workoutPlanToUpdate == null) {
                 throw new NotFoundException($"No existe un plan de entrenamiento con id {id}");
             }
-            var member = _memberRepositoryBase.GetById(creationWorkoutPlanDto.MemberId);
+            var member = _memberRepository.GetById(creationWorkoutPlanDto.MemberId);
             if (member == null)
             {
                 throw new NotFoundException($"No existe un miembro con id {creationWorkoutPlanDto.MemberId}");
@@ -119,7 +118,7 @@ namespace Application.Services
             workoutPlanToUpdate.Price = creationWorkoutPlanDto.Price;
             workoutPlanToUpdate.MemberId = creationWorkoutPlanDto.MemberId;
             workoutPlanToUpdate.Member = member;
-            _workoutPlanRepositoryBase.Update(workoutPlanToUpdate);
+            _workoutPlanRepository.Update(workoutPlanToUpdate);
            
         }
     }

@@ -16,10 +16,10 @@ namespace Application.Services
 {
     public class EmployeeService : IEmployeeService
     {
-        private readonly IRepositoryBase<Employee> _employeeRepositoryBase;
-        public EmployeeService(IRepositoryBase<Employee> employeeRepositoryBase)
+        private readonly IEmployeeRepository _employeeRepository;
+        public EmployeeService(IEmployeeRepository employeeRepositoryBase)
         {
-            _employeeRepositoryBase = employeeRepositoryBase;
+            _employeeRepository = employeeRepositoryBase;
         }
         public Employee Create(CreationEmployeeDto creationEmployeeDto)
         {
@@ -49,22 +49,22 @@ namespace Application.Services
                 Salary = creationEmployeeDto.Salary,
                 Role = creationEmployeeDto.Role
             };
-            return _employeeRepositoryBase.create(newEmployee);
+            return _employeeRepository.create(newEmployee);
         }
 
         public void Delete(int id)
         {
-            var employeeToDelete = _employeeRepositoryBase.GetById(id);
+            var employeeToDelete = _employeeRepository.GetById(id);
             if (employeeToDelete == null)
             {
                 throw new NotFoundException($"No existe un empleado con id {id}");
             }
-            _employeeRepositoryBase.Delete(employeeToDelete);
+            _employeeRepository.Delete(employeeToDelete);
         }
 
         public List<EmployeeDto> GetAllEmployees()
         {
-            List<Employee> employees = _employeeRepositoryBase.GetAll();
+            List<Employee> employees = _employeeRepository.GetAll();
             if (employees == null || employees.Count == 0)
             {
                 throw new NotFoundException("No hay empleados");
@@ -75,7 +75,7 @@ namespace Application.Services
 
         public EmployeeDto GetById(int id)
         {
-            var employee = _employeeRepositoryBase.GetById(id);
+            var employee = _employeeRepository.GetById(id);
             if (employee == null)
             {
                 throw new NotFoundException($"No existe un empleado con id {id}");
@@ -104,7 +104,7 @@ namespace Application.Services
             {
                 throw new ValidationException("El email no es valido. Debe contener un '@'.");
             }
-            var employeeToUpdate = _employeeRepositoryBase.GetById(id);
+            var employeeToUpdate = _employeeRepository.GetById(id);
             if (employeeToUpdate == null)
             {
                 throw new NotFoundException($"No existe un empleado con id {id}");
@@ -115,7 +115,7 @@ namespace Application.Services
             employeeToUpdate.Salary = creationEmployeeDto.Salary;
             employeeToUpdate.Role = creationEmployeeDto.Role;
             employeeToUpdate.LastUpdate = DateTime.Now;
-            _employeeRepositoryBase.Update(employeeToUpdate);
+            _employeeRepository.Update(employeeToUpdate);
         }
     }
 }
