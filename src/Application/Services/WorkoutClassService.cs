@@ -159,7 +159,7 @@ namespace Application.Services
             }
             var workoutClassToUpdate = _workoutClassRepositoryBase.GetById(id);
             
-            if (workoutClassToUpdate != null)
+            if (workoutClassToUpdate == null)
             {
                 throw new NotFoundException($"No existe una clase con id {id}");
             }

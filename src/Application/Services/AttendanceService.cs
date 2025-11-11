@@ -18,11 +18,13 @@ namespace Application.Services
         private readonly IRepositoryBase<Member> _memberRepositoryBase;
         private readonly IRepositoryBase<Employee> _employeeRepositoryBase;
         private readonly IAttendanceRepository _attendanceRepository;
-        public AttendanceService(IRepositoryBase<Attendance> attendanceRepositoryBase, IRepositoryBase<Employee> employeeRepositoryBase, IAttendanceRepository attendanceRepository)
+        public AttendanceService(IRepositoryBase<Attendance> attendanceRepositoryBase, IRepositoryBase<Employee> employeeRepositoryBase, IAttendanceRepository attendanceRepository, IRepositoryBase<Member> memberRepository)
         {
             _attendanceRepositoryBase = attendanceRepositoryBase;
             _employeeRepositoryBase = employeeRepositoryBase;
             _attendanceRepository = attendanceRepository;
+            _memberRepositoryBase = memberRepository;
+
         }
 
         public Attendance Create(CreationAttendanceDto creationAttendaceDto)
@@ -31,14 +33,18 @@ namespace Application.Services
             {
                 throw new ValidationException("Falta el campo 'date' o su valor no es valido.");
             }
-            if (creationAttendaceDto.MemberId <= 0)
-            {
-                throw new ValidationException("Falta el campo 'memberId' o su valor no es valido.");
+            // se tienen que poner al menos memberId o employeeId; no permitimos los dos a la vez
+            var hayMember = creationAttendaceDto.MemberId != null && creationAttendaceDto.MemberId > 0;
+            var hayEmployee = creationAttendaceDto.EmployeeId != null && creationAttendaceDto.EmployeeId > 0;
 
-            }
-            if (creationAttendaceDto.EmployeeId <= 0)
+            if (!hayMember && !hayEmployee)
             {
-                throw new ValidationException("Falta el campo 'employeeId' o su valor no es valido.");
+                throw new ValidationException("Debe poner memberId o employeeId (uno de los dos).");
+            }
+
+            if (hayMember && hayEmployee)
+            {
+                throw new ValidationException("Solo debe poner memberId o employeeId, no ambos.");
             }
             var newAttendance = new Attendance();
             
@@ -106,59 +112,54 @@ namespace Application.Services
 
         public void Update(int id, CreationAttendanceDto creationAttendaceDto)
         {
+           
             if (creationAttendaceDto.Date == default(DateTime))
             {
                 throw new ValidationException("Falta el campo 'date' o su valor no es valido.");
             }
-            if (creationAttendaceDto.MemberId <= 0)
-            {
-                throw new ValidationException("Falta el campo 'memberId' o su valor no es valido.");
+            // (igual que Create)
+            int? memberId = (creationAttendaceDto.MemberId.HasValue && creationAttendaceDto.MemberId.Value > 0) ? creationAttendaceDto.MemberId.Value : null;
+            int? employeeId = (creationAttendaceDto.EmployeeId.HasValue && creationAttendaceDto.EmployeeId.Value > 0) ? creationAttendaceDto.EmployeeId.Value : null;
 
-            }
-            if (creationAttendaceDto.EmployeeId <= 0)
+            var hayMember = memberId != null;
+            var hayEmployee = employeeId != null;
+            if (!hayMember && !hayEmployee)
             {
-                throw new ValidationException("Falta el campo 'employeeId' o su valor no es valido.");
+                throw new ValidationException("Debe proporcionar memberId o employeeId (uno de los dos).");
+            }
+
+            if (hayMember && hayEmployee)
+            {
+                throw new ValidationException("Solo debe proporcionar memberId o employeeId, no ambos.");
             }
             var attendanceToUpdate = _attendanceRepositoryBase.GetById(id);
             if (attendanceToUpdate == null)
             {
                 throw new NotFoundException($"No existe una asistencia con id {id}");
             }
-            if (creationAttendaceDto.MemberId != null)
+            if (hayMember)
             {
-                if (creationAttendaceDto.MemberId <= 0)
-                {
-                    throw new ValidationException("El campo 'memberId' no es valido (debe ser mayor a 0).");
-                }
-
-                var member = _memberRepositoryBase.GetById(creationAttendaceDto.MemberId.Value);
+                var member = _memberRepositoryBase.GetById(memberId.Value);
                 if (member == null)
                 {
-                    throw new NotFoundException($"No se encontro un miembro con id {creationAttendaceDto.MemberId}");
+                    throw new NotFoundException($"No se encontro un miembro con id {memberId}");
                 }
 
-                attendanceToUpdate.MemberId = creationAttendaceDto.MemberId;
+                attendanceToUpdate.MemberId = memberId;
                 attendanceToUpdate.Member = member;
-                // si la asisst es de miembro employee en nulo
                 attendanceToUpdate.EmployeeId = null;
                 attendanceToUpdate.Employee = null;
             }
-            if (creationAttendaceDto.EmployeeId != null)
+            else // hayEmployee
             {
-                if (creationAttendaceDto.EmployeeId <= 0)
-                {
-                    throw new ValidationException("El campo 'employeeId' no es valido (debe ser mayor a 0).");
-                }
-
-                var employee = _employeeRepositoryBase.GetById(creationAttendaceDto.EmployeeId.Value);
+                var employee = _employeeRepositoryBase.GetById(employeeId.Value);
                 if (employee == null)
                 {
-                    throw new NotFoundException($"No se encontro un empleado con id {creationAttendaceDto.EmployeeId}");
+                    throw new NotFoundException($"No se encontro un empleado con id {employeeId}");
                 }
 
-                attendanceToUpdate.EmployeeId = creationAttendaceDto.EmployeeId;
+                attendanceToUpdate.EmployeeId = employeeId;
                 attendanceToUpdate.Employee = employee;
-                // lo mismo al revez
                 attendanceToUpdate.MemberId = null;
                 attendanceToUpdate.Member = null;
             }

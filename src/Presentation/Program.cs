@@ -5,10 +5,12 @@ using Domain.Interfaces;
 using Infrastructure;
 using Infrastructure.Data;
 using Infrastructure.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Presentation.Middlewares;
+using System.Security.Claims;
 using System.Text;
 using System.Text.Json.Serialization;
 
@@ -73,10 +75,49 @@ builder.Services.AddAuthentication("Bearer").AddJwtBearer(options =>
             ValidAudience = builder.Configuration["Authentication:Audience"],
             IssuerSigningKey = new SymmetricSecurityKey(
                 Encoding.ASCII.GetBytes(builder.Configuration["Authentication:SecretForKey"]!)),
-            RoleClaimType = "role",
-            NameClaimType = "sub"
+            //mapear los claims del token con los que usa .net por defecto
+            RoleClaimType = ClaimTypes.Role,
+            NameClaimType = ClaimTypes.NameIdentifier
+        };
+
+        // Esto de los options lo usamos para debugear el token por no agarrar el rol
+        options.Events = new JwtBearerEvents
+        {
+            OnTokenValidated = context =>
+            {
+                var logger = context.HttpContext.RequestServices.GetRequiredService<ILogger<Program>>();
+                // obtenemos la lista de claims (puede ser null) (esto lo usamos para mostrar el logger del token)
+                var claimsList = context.Principal?.Claims.Select(c => new { c.Type, c.Value }).ToList();
+                object claimsPayload = claimsList != null ? (object)claimsList : new List<object>();
+                logger.LogInformation("Token validated. Claims: {@Claims}", claimsPayload);
+                return Task.CompletedTask;
+            },
+            // mensajes de error personalizados
+            OnChallenge = async context =>
+            {
+                if (!context.Handled && !context.Response.HasStarted)
+                {
+                    context.HandleResponse();
+                    context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                    context.Response.ContentType = "application/json";
+                    var payload = new { error = "No autenticado. Token inválido o ausente." };
+                    await context.Response.WriteAsync(System.Text.Json.JsonSerializer.Serialize(payload));
+                }
+            },
+            OnForbidden = async context =>
+            {
+                if (!context.Response.HasStarted)
+                {
+                    context.Response.StatusCode = StatusCodes.Status403Forbidden;
+                    context.Response.ContentType = "application/json";
+                    var payload = new { error = "No tiene permisos para acceder a este recurso." };
+                    await context.Response.WriteAsync(System.Text.Json.JsonSerializer.Serialize(payload));
+                }
+            }
         };
     }
+
+
 );
 
 // Inyeccion de dependencias de servicios
