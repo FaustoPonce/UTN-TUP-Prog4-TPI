@@ -133,21 +133,13 @@ builder.Services.AddScoped<IAuthenticacionService, AuthenticacionService>();
 builder.Services.AddScoped<IjokeService, JokeService>();
 
 // Inyeccion de dependencias de repositorios
-builder.Services.AddScoped<IRepositoryBase<User>, RepositoryBase<User>>();
-builder.Services.AddScoped<IRepositoryBase<Employee>, RepositoryBase<Employee>>();
-builder.Services.AddScoped<IRepositoryBase<Admin>, RepositoryBase<Admin>>();
-builder.Services.AddScoped<IRepositoryBase<WorkoutPlan>, RepositoryBase<WorkoutPlan>>();
-builder.Services.AddScoped<IRepositoryBase<Member>, RepositoryBase<Member>>();
-builder.Services.AddScoped<IRepositoryBase<Attendance>, RepositoryBase<Attendance>>();
-builder.Services.AddScoped<IRepositoryBase<Payment>, RepositoryBase<Payment>>();
-builder.Services.AddScoped<IRepositoryBase<WorkoutClass>, RepositoryBase<WorkoutClass>>();
+
 builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
 builder.Services.AddScoped<IWorkoutPlanRepository, WorkoutPlanRepository>();
 builder.Services.AddScoped<IAttendanceRepository, AttendanceRepository>();
 builder.Services.AddScoped<IMemberRepository, MemberRepository>();
 builder.Services.AddScoped<IWorkoutClassRepository, WorkoutClassRepository>();
 builder.Services.AddScoped<IAdminRepository, AdminRepository>();
-builder.Services.AddScoped<IRecepcionistaRepository, RecepcionistaRepository>();
 builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 

@@ -9,5 +9,6 @@ namespace Domain.Interfaces
 {
     public interface IEmployeeRepository : IRepositoryBase<Employee> 
     {
+        Employee GetByEmail(string name);
     }
 }

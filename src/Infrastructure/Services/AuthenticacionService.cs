@@ -18,9 +18,9 @@ namespace Infrastructure.Services
     {
         private readonly IAdminRepository _adminRepository;
         private readonly IConfiguration _config;
-        private readonly IRecepcionistaRepository _recepcionistaRepository;
+        private readonly IEmployeeRepository _recepcionistaRepository;
 
-        public AuthenticacionService(IAdminRepository adminRepository, IConfiguration config, IRecepcionistaRepository recepcionistaRepository)
+        public AuthenticacionService(IAdminRepository adminRepository, IConfiguration config, IEmployeeRepository recepcionistaRepository)
         {
             _adminRepository = adminRepository;
             _recepcionistaRepository = recepcionistaRepository;
